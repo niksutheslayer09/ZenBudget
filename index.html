@@ -131,11 +131,28 @@
       gap: 10px;
       align-items: stretch;
     }
-    .row .card { min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; }
 
-    .row .card h2 { font-size: 10px; }
-    .row .card .big { font-size: 22px; }
-    .row .card .cardAction { margin-top: auto; }
+    #page-home .monthRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    #page-home .monthRow > .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 160px;
+      height: 100%;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    #page-home .monthRow > .card .cardAction {
+      margin-top: auto;
+      width: 100%;
+      display: block;
+    }
 
     .card.card--income { border-top: 2px solid var(--accent); }
     .card.card--expense { border-top: 2px solid var(--danger); }
@@ -883,7 +900,7 @@
         <div class="hint" id="vsLabel" style="margin-top: 10px;">—</div>
       </div>
 
-      <div class="row" style="margin-top: 14px;">
+      <div class="row monthRow" style="margin-top: 14px;">
         <div class="card card--income">
           <h2>Income (month)</h2>
           <div class="big mono pos" id="monthIncome">$0.00</div>
