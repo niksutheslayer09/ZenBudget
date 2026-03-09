@@ -966,25 +966,19 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100% !important;
-      max-width: 100vw !important;
-      overflow-x: hidden !important;
-      box-sizing: border-box !important;
-      height: 100%;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: flex-start !important;
-      align-items: stretch !important;
-      padding: 16px 20px 30px 20px !important;
-      padding-left: 20px !important;
-      padding-right: 20px !important;
-      box-sizing: border-box !important;
-      height: 100vh !important;
-      max-height: 100vh !important;
-      overflow: hidden !important;
-      background: #000000 !important;
-      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      padding: 20px;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      height: 100vh;
+      max-height: 100vh;
       overflow: hidden;
+      background: #000000;
+      z-index: 9998;
     }
 
     #onboarding-screen { display: none !important; }
@@ -1080,57 +1074,33 @@
       box-sizing: border-box;
     }
 
-    .obOption {
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      padding: 10px 14px !important;
-      height: 46px !important;
-      max-height: 46px !important;
-      min-height: unset !important;
-      font-size: 15px !important;
-      font-weight: 500 !important;
-      margin-bottom: 8px !important;
-      border-radius: 12px !important;
-      box-sizing: border-box !important;
-      flex-shrink: 1 !important;
-      flex-grow: 0 !important;
-      width: calc(100% - 0px) !important;
-      max-width: 100% !important;
-      overflow: hidden !important;
-      position: static !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      background: rgba(255,255,255,0.06);
+    .ob-option {
+      display: block;
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
       color: #ffffff;
-      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
       text-align: left;
-      font-family: 'Outfit', system-ui, sans-serif;
-      transition: all 0.2s ease;
+      box-sizing: border-box;
+      cursor: pointer;
     }
 
-    .obOption.selected {
+    .ob-option.selected {
+      background: rgba(0,194,122,0.12);
       border-color: #00C27A;
-      background: rgba(0,194,122,0.10);
     }
 
     #onboarding-screen .obStep {
-      flex: 0 0 auto !important;
-      flex-grow: 0 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 8px !important;
-      margin-bottom: 0 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      overflow: hidden !important;
-      box-sizing: border-box !important;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-
-    #onboarding-screen .obStep .obOption {
-      margin-bottom: 0 !important;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
     }
 
     .obBottom {
@@ -1478,24 +1448,24 @@
       <div class="obViewport">
         <div class="obTrack" id="obTrack">
           <div class="obStep" data-step="1">
-            <button class="obOption" type="button" data-value="Working">💼 Working</button>
-            <button class="obOption" type="button" data-value="Studying">📚 Studying</button>
-            <button class="obOption" type="button" data-value="Unemployed">🔍 Unemployed</button>
-            <button class="obOption" type="button" data-value="Other">🏠 Other</button>
+            <button class="ob-option" onclick="selectOption(this, 'Working')">💼 Working</button>
+            <button class="ob-option" onclick="selectOption(this, 'Studying')">📚 Studying</button>
+            <button class="ob-option" onclick="selectOption(this, 'Unemployed')">🔍 Unemployed</button>
+            <button class="ob-option" onclick="selectOption(this, 'Other')">🏠 Other</button>
           </div>
 
           <div class="obStep" data-step="2">
-            <button class="obOption" type="button" data-value="€0–500">€0–500</button>
-            <button class="obOption" type="button" data-value="€500–1500">€500–1500</button>
-            <button class="obOption" type="button" data-value="€1500–5000">€1500–5000</button>
-            <button class="obOption" type="button" data-value="€5000+">€5000+</button>
+            <button class="ob-option" onclick="selectOption(this, '€0–500')">€0–500</button>
+            <button class="ob-option" onclick="selectOption(this, '€500–1500')">€500–1500</button>
+            <button class="ob-option" onclick="selectOption(this, '€1500–5000')">€1500–5000</button>
+            <button class="ob-option" onclick="selectOption(this, '€5000+')">€5000+</button>
           </div>
 
           <div class="obStep" data-step="3">
-            <button class="obOption" type="button" data-value="Salary">💰 Salary</button>
-            <button class="obOption" type="button" data-value="Benefits">📋 Benefits</button>
-            <button class="obOption" type="button" data-value="Family">👨‍👩‍👧 Family</button>
-            <button class="obOption" type="button" data-value="Other">✨ Other</button>
+            <button class="ob-option" onclick="selectOption(this, 'Salary')">💰 Salary</button>
+            <button class="ob-option" onclick="selectOption(this, 'Benefits')">📋 Benefits</button>
+            <button class="ob-option" onclick="selectOption(this, 'Family')">👨‍👩‍👧 Family</button>
+            <button class="ob-option" onclick="selectOption(this, 'Other')">✨ Other</button>
           </div>
         </div>
       </div>
@@ -3435,6 +3405,13 @@
 
         let idx = 0;
 
+        const optionValueByEl = new WeakMap();
+        for (const btn of track.querySelectorAll('.ob-option')) {
+          const raw = btn.getAttribute('onclick') || '';
+          const m = raw.match(/selectOption\(this,\s*'([^']*)'\s*\)/);
+          if (m && m[1] != null) optionValueByEl.set(btn, m[1]);
+        }
+
         const stepValue = (i) => {
           if (i === 0) return sel.status;
           if (i === 1) return sel.income;
@@ -3450,8 +3427,8 @@
         const syncSelectedUI = () => {
           const stepEl = track.querySelector(`.obStep[data-step="${idx + 1}"]`);
           const v = stepValue(idx);
-          for (const b of stepEl.querySelectorAll('.obOption')) {
-            b.classList.toggle('selected', (b.dataset.value || '') === v);
+          for (const b of stepEl.querySelectorAll('.ob-option')) {
+            b.classList.toggle('selected', (optionValueByEl.get(b) || '') === v);
           }
         };
 
@@ -3467,15 +3444,11 @@
           syncSelectedUI();
         };
 
-        for (const stepEl of track.querySelectorAll('.obStep')) {
-          for (const b of stepEl.querySelectorAll('.obOption')) {
-            b.onclick = () => {
-              const v = b.dataset.value || '';
-              setStepValue(idx, v);
-              update();
-            };
-          }
-        }
+        window.selectOption = (el, value) => {
+          void el;
+          setStepValue(idx, value);
+          update();
+        };
 
         back.onclick = () => {
           if (idx === 0) return;
