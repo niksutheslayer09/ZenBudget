@@ -17,9 +17,9 @@
       --text: #ffffff;
       --muted: rgba(255,255,255,0.5);
       --hairline: rgba(255,255,255,0.10);
-      --accent: #00E5A0;
-      --accent-glow: rgba(0,229,160,0.26);
-      --danger: #FF2D55;
+      --accent: #00C27A;
+      --accent-glow: rgba(0,194,122,0.26);
+      --danger: #E8003D;
       --radius: 18px;
       --radius-sm: 18px;
       --shadow: 0 4px 24px rgba(0,0,0,0.5);
@@ -131,7 +131,11 @@
       gap: 10px;
       align-items: stretch;
     }
-    .row .card { min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; }
+    .row .card { min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; }
+
+    .row .card h2 { font-size: 10px; }
+    .row .card .big { font-size: 22px; }
+    .row .card .cardAction { margin-top: auto; }
 
     .card.card--income { border-top: 2px solid var(--accent); }
     .card.card--expense { border-top: 2px solid var(--danger); }
@@ -194,15 +198,15 @@
     .btn:active { transform: scale(0.97); opacity: 0.9; }
 
     .btn.primary {
-      background: rgba(0,229,160,0.16);
-      border-color: rgba(0,229,160,0.35);
-      color: var(--accent);
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
     }
 
     .btn.danger {
-      background: rgba(255,45,85,0.14);
-      border-color: rgba(255,45,85,0.35);
-      color: var(--danger);
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #ffffff;
     }
 
     .btn.inline {
@@ -250,19 +254,27 @@
     }
 
     .input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.25); }
-    .input:focus, select:focus, textarea:focus { border-color: rgba(0,229,160,0.5); box-shadow: 0 0 0 2px rgba(0,229,160,0.10); }
+    .input:focus, select:focus, textarea:focus { border-color: rgba(0,194,122,0.5); box-shadow: 0 0 0 2px rgba(0,194,122,0.10); }
 
-    input[type="date"], input[type="time"] {
-      box-sizing: border-box;
-      width: 100%;
-      max-width: 100%;
-      overflow: hidden;
+    input[type="date"], input[type="time"], .dateField {
+      box-sizing: border-box !important;
+      width: calc(100% - 32px) !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      display: block !important;
       text-align: center;
       white-space: nowrap;
-      padding: 12px;
+      padding: 12px !important;
     }
 
     input[type="date"]::-webkit-datetime-edit { text-align: center; }
+
+    .dateFieldWrap {
+      overflow: hidden;
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
 
     textarea { resize: none; min-height: 84px; }
 
@@ -367,7 +379,7 @@
 
     .tab.active {
       color: #FFFFFF;
-      background: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.25);
       font-weight: 600;
     }
@@ -495,7 +507,38 @@
       border-radius: 18px;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.10);
+      position: relative;
     }
+
+    .barTip {
+      position: absolute;
+      z-index: 3;
+      background: rgba(20,20,20,0.95);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      white-space: pre-line;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+    }
+
+    .barTip::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -6px;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid rgba(20,20,20,0.95);
+    }
+
+    .barTipAmt { color: var(--accent); }
 
     .chartTop {
       display: flex;
@@ -892,10 +935,11 @@
           <div class="chartTop">
             <h2 class="sectionTitle">Monthly Overview</h2>
             <div class="chartLegend" aria-label="Chart legend">
-              <span class="legendItem"><span class="legendDot" style="background:#00E5A0"></span>Income</span>
-              <span class="legendItem"><span class="legendDot" style="background:#FF2D55"></span>Expenses</span>
+              <span class="legendItem"><span class="legendDot" style="background:#00C27A"></span>Income</span>
+              <span class="legendItem"><span class="legendDot" style="background:#E8003D"></span>Expenses</span>
             </div>
           </div>
+          <div class="barTip" id="barTip" style="display:none"></div>
           <canvas id="chartBars" height="160"></canvas>
         </div>
       </div>
@@ -944,7 +988,7 @@
           </div>
           <div>
             <div class="label">Date</div>
-            <input id="txDate" class="input" type="date" />
+            <div class="dateFieldWrap"><input id="txDate" class="input" type="date" /></div>
           </div>
         </div>
 
@@ -1076,14 +1120,14 @@
 
       const CATEGORY_COLORS = {
         income: {
-          Salary: '#00E5A0',
+          Salary: '#00C27A',
           Freelance: '#7C83FD',
           Investment: '#FFD700',
           Gift: '#FF9ECD',
           Other: '#888888'
         },
         expense: {
-          Food: '#FF2D55',
+          Food: '#E8003D',
           Transport: '#FFA500',
           Housing: '#A78BFA',
           Subscriptions: '#34D399',
@@ -1204,7 +1248,7 @@
           b.type = 'button';
           b.className = 'catPill' + (sel.value === c ? ' active' : '');
           b.textContent = c;
-          b.style.borderColor = catColor(state.txType, c);
+          b.style.borderColor = state.txType === 'income' ? '#00C27A' : '#E8003D';
           b.style.color = catColor(state.txType, c);
           b.addEventListener('click', () => {
             sel.value = c;
@@ -1836,6 +1880,8 @@
         const barW = Math.min(14, Math.max(6, Math.floor(groupW * 0.18)));
         const gap = Math.max(6, Math.floor(groupW * 0.10));
 
+        const bars = [];
+
         for (let i = 0; i < keys.length; i++) {
           const s = sums[i];
           const xCenter = padL + (i + 0.5) * groupW;
@@ -1845,11 +1891,33 @@
 
           const baseY = padT + chartH;
 
-          ctx.fillStyle = '#00E5A0';
+          ctx.fillStyle = '#00C27A';
           ctx.fillRect(xCenter - gap / 2 - barW, baseY - incH, barW, incH);
 
-          ctx.fillStyle = '#FF2D55';
+          bars.push({
+            kind: 'income',
+            monthKey: keys[i],
+            monthLabel: new Date(keys[i] + '-01T00:00:00').toLocaleString(undefined, { month: 'long' }),
+            amount: s.income,
+            x: xCenter - gap / 2 - barW,
+            y: baseY - incH,
+            w: barW,
+            h: incH
+          });
+
+          ctx.fillStyle = '#E8003D';
           ctx.fillRect(xCenter + gap / 2, baseY - expH, barW, expH);
+
+          bars.push({
+            kind: 'expense',
+            monthKey: keys[i],
+            monthLabel: new Date(keys[i] + '-01T00:00:00').toLocaleString(undefined, { month: 'long' }),
+            amount: s.expenses,
+            x: xCenter + gap / 2,
+            y: baseY - expH,
+            w: barW,
+            h: expH
+          });
 
           const d = new Date(keys[i] + '-01T00:00:00');
           const m = d.toLocaleString(undefined, { month: 'short' });
@@ -1859,6 +1927,8 @@
           ctx.textBaseline = 'top';
           ctx.fillText(m, xCenter, baseY + 4);
         }
+
+        canvas._bars = bars;
       }
 
       function drawDonut(data) {
@@ -2826,6 +2896,68 @@
           state.donutSelected = null;
           render();
         });
+
+        const barsCanvas = $('chartBars');
+        const tip = $('barTip');
+        if (barsCanvas && tip) {
+          const hide = () => {
+            tip.style.display = 'none';
+          };
+
+          const showFor = (bar, clientX, clientY) => {
+            const rect = barsCanvas.getBoundingClientRect();
+            const block = tip.parentElement;
+            const blockRect = block.getBoundingClientRect();
+
+            const x = (clientX - rect.left);
+            const y = (clientY - rect.top);
+
+            const px = Math.max(0, Math.min(rect.width, x));
+            const py = Math.max(0, Math.min(rect.height, y));
+
+            const barCenterX = bar.x + bar.w / 2;
+            const topY = bar.y;
+
+            tip.innerHTML = `${bar.monthLabel}\n<span class="barTipAmt">${fmtMoney(bar.kind === 'income' ? bar.amount : -bar.amount)}</span>`;
+            tip.querySelector('.barTipAmt').style.color = bar.kind === 'income' ? '#00C27A' : '#E8003D';
+
+            tip.style.left = `${Math.round((rect.left - blockRect.left) + barCenterX)}px`;
+            tip.style.top = `${Math.round((rect.top - blockRect.top) + topY - 10)}px`;
+            tip.style.display = 'block';
+
+            // if tap was far away, still keep bubble close to bar
+            void px; void py;
+          };
+
+          const pickBar = (clientX, clientY) => {
+            const rect = barsCanvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            const bars = barsCanvas._bars || [];
+            return bars.find(b => x >= b.x && x <= (b.x + b.w) && y >= b.y && y <= (b.y + b.h));
+          };
+
+          const onPointer = (clientX, clientY) => {
+            const bar = pickBar(clientX, clientY);
+            if (!bar) {
+              hide();
+              return;
+            }
+            showFor(bar, clientX, clientY);
+          };
+
+          barsCanvas.addEventListener('click', (e) => {
+            onPointer(e.clientX, e.clientY);
+          });
+
+          barsCanvas.addEventListener('touchstart', (e) => {
+            if (!e.touches || e.touches.length === 0) return;
+            const t = e.touches[0];
+            onPointer(t.clientX, t.clientY);
+          }, { passive: true });
+
+          barsCanvas.addEventListener('mouseleave', hide);
+        }
       }
 
       function infoModal(title, text) {
