@@ -20,13 +20,17 @@
       --accent: #4FC3F7;
       --accent-glow: rgba(79,195,247,0.3);
       --danger: #ff6b6b;
-      --radius: 18px;
-      --radius-sm: 18px;
+      --radius: 16px;
+      --radius-sm: 16px;
       --shadow: 0 4px 24px rgba(0,0,0,0.5);
       --nav-h: 56px;
       --safe-b: env(safe-area-inset-bottom, 0px);
       --safe-t: env(safe-area-inset-top, 0px);
     }
+
+    #page-home .card { margin-bottom: 12px; }
+    #page-home .card + .card { margin-top: 0; }
+    #page-home .card:last-child { margin-bottom: 0; }
 
     * { box-sizing: border-box; }
 
@@ -127,7 +131,7 @@
       gap: 10px;
       align-items: stretch;
     }
-    .row .card { min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; }
+    .row .card { min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; }
 
     .card.card--income { border-top: 2px solid var(--accent); }
     .card.card--expense { border-top: 2px solid var(--danger); }
@@ -471,6 +475,57 @@
       margin-top: 12px;
     }
 
+    .chartBlock {
+      overflow: hidden;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .chartTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .chartLegend {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.70);
+      white-space: nowrap;
+    }
+
+    .legendItem {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legendDot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.5);
+    }
+
+    .donutWrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    .donutWrap canvas {
+      width: 160px;
+      height: 160px;
+    }
+
     canvas {
       width: 100%;
       display: block;
@@ -769,13 +824,26 @@
       </div>
 
       <div class="card" style="margin-top: 12px;">
-        <div class="inlineRow">
-          <h2 class="sectionTitle">Charts</h2>
-        </div>
-        <div class="charts">
+        <div class="chartBlock">
+          <div class="chartTop">
+            <h2 class="sectionTitle">Monthly Overview</h2>
+            <div class="chartLegend" aria-label="Chart legend">
+              <span class="legendItem"><span class="legendDot" style="background:#4FC3F7"></span>Income</span>
+              <span class="legendItem"><span class="legendDot" style="background:#ff6b6b"></span>Expenses</span>
+            </div>
+          </div>
           <canvas id="chartBars" height="160"></canvas>
-          <canvas id="chartDonut" height="220"></canvas>
-          <div id="chartLegend"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 12px;">
+        <div class="chartBlock">
+          <div class="chartTop">
+            <h2 class="sectionTitle">Expense Breakdown</h2>
+          </div>
+          <div class="donutWrap">
+            <canvas id="chartDonut" width="160" height="160"></canvas>
+          </div>
         </div>
       </div>
     </section>
@@ -964,7 +1032,8 @@
       const state = {
         tab: 'home',
         txType: 'income',
-        currency: 'USD'
+        currency: 'USD',
+        donutSelected: null
       };
 
       function nowISODate() {
@@ -1083,6 +1152,11 @@
         const sign = n < 0 ? '-' : '';
         const abs = Math.abs(n);
         return `${sign}${currencySymbol()}${abs.toFixed(2)}`;
+      }
+
+      function fmtAxisMoney(amount) {
+        const n = Math.max(0, Number(amount) || 0);
+        return `${currencySymbol()}${Math.round(n)}`;
       }
 
       function currencySymbol() {
@@ -1616,12 +1690,24 @@
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
         const rect = canvas.getBoundingClientRect();
-        const w = Math.max(1, Math.floor(rect.width * dpr));
-        const h = Math.max(1, Math.floor((Number(canvas.getAttribute('height')) || rect.height || 160) * dpr));
-        canvas.width = w;
-        canvas.height = h;
+        const cssW = Math.max(1, rect.width || Number(canvas.getAttribute('width')) || 160);
+        const cssH = Math.max(1, rect.height || Number(canvas.getAttribute('height')) || 160);
+        canvas.width = Math.floor(cssW * dpr);
+        canvas.height = Math.floor(cssH * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        return { ctx, width: rect.width, height: (Number(canvas.getAttribute('height')) || rect.height || 160) };
+        return { ctx, width: cssW, height: cssH };
+      }
+
+      function niceMax(v) {
+        const n = Math.max(1, Number(v) || 1);
+        const pow = Math.pow(10, Math.floor(Math.log10(n)));
+        const scaled = n / pow;
+        let step = 1;
+        if (scaled <= 1) step = 1;
+        else if (scaled <= 2) step = 2;
+        else if (scaled <= 5) step = 5;
+        else step = 10;
+        return step * pow;
       }
 
       function lastNMonthKeys(n) {
@@ -1644,51 +1730,73 @@
 
         const keys = lastNMonthKeys(6);
         const sums = keys.map(k => monthSummary(data, k));
-        const maxV = Math.max(1, ...sums.map(s => Math.max(s.income, s.expenses)));
 
-        const padL = 8;
+        const rawMax = Math.max(1, ...sums.map(s => Math.max(s.income, s.expenses)));
+        const maxV = niceMax(rawMax);
+
+        const yTicks = 4;
+        ctx.font = '10px Outfit, system-ui, sans-serif';
+        const yLabelW = Math.ceil(ctx.measureText(fmtAxisMoney(maxV)).width) + 8;
+
+        const padL = yLabelW;
         const padR = 8;
-        const padT = 10;
+        const padT = 8;
         const padB = 18;
-        const chartW = width - padL - padR;
-        const chartH = height - padT - padB;
 
-        ctx.fillStyle = 'rgba(255,255,255,0.05)';
-        for (let i = 0; i <= 3; i++) {
-          const y = padT + (chartH * i) / 3;
-          ctx.fillRect(padL, y, chartW, 1);
+        const chartW = Math.max(1, width - padL - padR);
+        const chartH = Math.max(1, height - padT - padB);
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= yTicks; i++) {
+          const y = padT + (chartH * i) / yTicks;
+          ctx.beginPath();
+          ctx.moveTo(padL, y);
+          ctx.lineTo(padL + chartW, y);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        for (let i = 0; i <= yTicks; i++) {
+          const v = (maxV * (yTicks - i)) / yTicks;
+          const y = padT + (chartH * i) / yTicks;
+          ctx.fillText(fmtAxisMoney(v), padL - 6, y);
         }
 
         const groupW = chartW / keys.length;
-        const barW = Math.max(6, Math.min(18, groupW * 0.22));
-        const gap = Math.max(6, groupW * 0.14);
+        const barW = Math.min(14, Math.max(6, Math.floor(groupW * 0.18)));
+        const gap = Math.max(6, Math.floor(groupW * 0.10));
 
         for (let i = 0; i < keys.length; i++) {
           const s = sums[i];
-          const x0 = padL + i * groupW + groupW / 2;
+          const xCenter = padL + (i + 0.5) * groupW;
 
-          const incH = (s.income / maxV) * chartH;
-          const expH = (s.expenses / maxV) * chartH;
+          const incH = Math.max(0, Math.min(chartH, (s.income / maxV) * chartH));
+          const expH = Math.max(0, Math.min(chartH, (s.expenses / maxV) * chartH));
+
+          const baseY = padT + chartH;
 
           ctx.fillStyle = '#4FC3F7';
-          ctx.fillRect(x0 - gap / 2 - barW, padT + (chartH - incH), barW, incH);
+          ctx.fillRect(xCenter - gap / 2 - barW, baseY - incH, barW, incH);
 
           ctx.fillStyle = '#ff6b6b';
-          ctx.fillRect(x0 + gap / 2, padT + (chartH - expH), barW, expH);
+          ctx.fillRect(xCenter + gap / 2, baseY - expH, barW, expH);
 
-          const mm = keys[i].split('-')[1];
+          const d = new Date(keys[i] + '-01T00:00:00');
+          const m = d.toLocaleString(undefined, { month: 'short' });
           ctx.fillStyle = 'rgba(255,255,255,0.35)';
-          ctx.font = '11px Outfit, system-ui, sans-serif';
+          ctx.font = '10px Outfit, system-ui, sans-serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
-          ctx.fillText(mm, x0, padT + chartH + 4);
+          ctx.fillText(m, xCenter, baseY + 4);
         }
       }
 
       function drawDonut(data) {
         const canvas = $('chartDonut');
-        const legend = $('chartLegend');
-        if (!canvas || !legend) return;
+        if (!canvas) return;
 
         const { ctx, width, height } = dprScale(canvas);
         ctx.clearRect(0, 0, width, height);
@@ -1708,11 +1816,16 @@
         const entries = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
         const cx = width / 2;
         const cy = height / 2;
-        const r = Math.min(width, height) * 0.38;
-        const thick = Math.max(12, r * 0.36);
+        const r = Math.min(width, height) * 0.42;
+        const thick = Math.max(12, r * 0.42);
 
         const startAt = -Math.PI / 2;
         let ang = startAt;
+
+        const gapPx = 2;
+        const gapAng = r > 0 ? gapPx / r : 0;
+
+        const slices = [];
 
         if (total <= 0 || entries.length === 0) {
           ctx.beginPath();
@@ -1723,57 +1836,47 @@
         } else {
           for (const [cat, amt] of entries) {
             const slice = (amt / total) * Math.PI * 2;
+            const a0 = ang + gapAng / 2;
+            const a1 = ang + slice - gapAng / 2;
+
+            slices.push({ cat, amt, a0, a1 });
+
             ctx.beginPath();
             ctx.strokeStyle = catColor('expense', cat);
             ctx.lineWidth = thick;
             ctx.lineCap = 'butt';
-            ctx.arc(cx, cy, r, ang, ang + slice);
+            if (a1 > a0) ctx.arc(cx, cy, r, a0, a1);
             ctx.stroke();
             ang += slice;
           }
         }
 
-        ctx.fillStyle = 'rgba(255,255,255,0.85)';
-        ctx.font = '600 13px Outfit, system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(0,0,0,0)';
+        ctx.beginPath();
+        ctx.arc(cx, cy, Math.max(1, r - thick / 2), 0, Math.PI * 2);
+        ctx.fill();
+
+        const selected = state.donutSelected && slices.find(s => s.cat === state.donutSelected.cat) ? state.donutSelected : null;
+        const selAmt = selected ? selected.amt : null;
+        const selCat = selected ? selected.cat : null;
+        const selPct = (selected && total > 0) ? (selected.amt / total) * 100 : null;
+
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('Expenses', cx, cy - 10);
-        ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        ctx.font = '700 15px Outfit, system-ui, sans-serif';
-        ctx.fillText(fmtMoney(-total), cx, cy + 10);
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.font = '700 11px Outfit, system-ui, sans-serif';
+        ctx.fillText(selected ? selCat : 'Expenses', cx, cy - 10);
 
-        legend.innerHTML = '';
-        for (const [cat, amt] of entries) {
-          const row = document.createElement('div');
-          row.style.display = 'flex';
-          row.style.alignItems = 'center';
-          row.style.justifyContent = 'space-between';
-          row.style.gap = '10px';
-          row.style.padding = '6px 0';
+        ctx.fillStyle = 'rgba(255,255,255,0.70)';
+        ctx.font = '700 13px Outfit, system-ui, sans-serif';
+        ctx.fillText(selected ? fmtMoney(-selAmt) : fmtMoney(-total), cx, cy + 6);
 
-          const left = document.createElement('div');
-          left.className = 'catTag';
+        ctx.fillStyle = 'rgba(255,255,255,0.40)';
+        ctx.font = '600 10px Outfit, system-ui, sans-serif';
+        ctx.fillText(selected && selPct !== null ? `${selPct.toFixed(0)}%` : '', cx, cy + 22);
 
-          const dot = document.createElement('span');
-          dot.className = 'catDot';
-          dot.style.background = catColor('expense', cat);
-
-          const t = document.createElement('span');
-          t.textContent = cat;
-
-          left.appendChild(dot);
-          left.appendChild(t);
-
-          const right = document.createElement('div');
-          right.className = 'mono';
-          right.style.fontSize = '13px';
-          right.style.color = 'rgba(255,255,255,0.65)';
-          right.textContent = fmtMoney(-amt);
-
-          row.appendChild(left);
-          row.appendChild(right);
-          legend.appendChild(row);
-        }
+        canvas._slices = slices;
+        canvas._total = total;
       }
 
       function renderTransactions(data) {
@@ -2558,6 +2661,62 @@
           b.dataset.open = b.dataset.open === '1' ? '0' : '1';
           render();
         });
+
+        const donut = $('chartDonut');
+        if (donut) {
+          donut.addEventListener('click', (e) => {
+            const rect = donut.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const cx = rect.width / 2;
+            const cy = rect.height / 2;
+            const dx = x - cx;
+            const dy = y - cy;
+            const r = Math.sqrt(dx * dx + dy * dy);
+
+            const outerR = Math.min(rect.width, rect.height) * 0.42;
+            const thick = Math.max(12, outerR * 0.42);
+            const innerR = Math.max(0, outerR - thick / 2);
+
+            const slices = donut._slices || [];
+
+            if (r < innerR || r > outerR + thick / 2) {
+              state.donutSelected = null;
+              render();
+              return;
+            }
+
+            let a = Math.atan2(dy, dx);
+            if (a < -Math.PI / 2) a += Math.PI * 2;
+            // Convert to 0..2PI where 0 is at top
+            const ang = a + Math.PI / 2;
+
+            const hit = slices.find(s => {
+              const a0 = (s.a0 + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
+              const a1 = (s.a1 + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
+              if (a1 >= a0) return ang >= a0 && ang <= a1;
+              return ang >= a0 || ang <= a1;
+            });
+
+            if (hit) {
+              state.donutSelected = { cat: hit.cat, amt: hit.amt };
+              render();
+            } else {
+              state.donutSelected = null;
+              render();
+            }
+          });
+        }
+
+        document.addEventListener('click', (e) => {
+          if (!state.donutSelected) return;
+          const donutEl = $('chartDonut');
+          if (!donutEl) return;
+          if (e.target === donutEl) return;
+          state.donutSelected = null;
+          render();
+        });
       }
 
       function infoModal(title, text) {
@@ -2591,6 +2750,10 @@
         setTab('home');
 
         window.addEventListener('storage', () => render());
+        window.addEventListener('resize', () => {
+          if (state.tab !== 'home') return;
+          render();
+        });
         render();
       }
 
