@@ -659,6 +659,42 @@
       white-space: nowrap;
     }
 
+    .seg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .seg button {
+      width: 100%;
+      padding: 14px 10px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      box-sizing: border-box;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.4);
+      font-family: 'Outfit', system-ui, sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .seg #txTypeIncome.active {
+      background: rgba(0,194,122,0.15);
+      border: 2px solid #00C27A;
+      color: #00C27A;
+    }
+
+    .seg #txTypeExpense.active {
+      background: rgba(232,0,61,0.15);
+      border: 2px solid #E8003D;
+      color: #E8003D;
+    }
+
     canvas {
       width: 100%;
       display: block;
@@ -929,11 +965,13 @@
       left: 0;
       width: 100%;
       height: 100%;
+      min-height: 100vh;
       background: #000000;
       z-index: 9998;
       display: none;
       flex-direction: column;
-      padding: 24px 20px;
+      justify-content: space-between;
+      padding: 20px 20px 40px 20px;
       box-sizing: border-box;
       overflow: hidden;
     }
@@ -946,7 +984,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 16px;
+      flex-shrink: 0;
+      margin-bottom: 24px;
+    }
+
+    .obMain {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
     }
 
     .obBack {
@@ -974,8 +1021,8 @@
 
     .obTitle {
       margin-top: 0;
-      margin-bottom: 6px;
-      font-size: 20px;
+      margin-bottom: 20px;
+      font-size: 26px;
       font-weight: 700;
       color: #ffffff;
       line-height: 1.2;
@@ -996,7 +1043,9 @@
       flex-direction: column;
       overflow: hidden;
       margin-top: 0;
-      max-height: 520px;
+      justify-content: center;
+      max-height: none;
+      min-height: 0;
     }
 
     .obTrack {
@@ -1009,49 +1058,53 @@
     .obStep {
       width: 100%;
       flex: 0 0 100%;
-      padding-right: 8px;
+      padding-right: 0;
       box-sizing: border-box;
     }
 
     .obOption {
       width: 100%;
-      padding: 11px 16px;
-      margin-bottom: 7px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.15);
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.06);
       color: #ffffff;
-      font-size: 14px;
-      font-weight: 400;
+      font-size: 15px;
+      font-weight: 500;
       line-height: 1.2;
       cursor: pointer;
       text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-sizing: border-box;
       font-family: 'Outfit', system-ui, sans-serif;
       transition: all 0.2s ease;
     }
 
     .obOption.selected {
       border-color: #00C27A;
-      background: rgba(0,194,122,0.12);
+      background: rgba(0,194,122,0.10);
     }
 
     .obBottom {
-      padding-top: 0;
+      flex-shrink: 0;
     }
 
     .obContinue {
       background: #00C27A;
       color: #ffffff;
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 15px;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 16px;
       font-weight: 600;
       border: none;
       cursor: pointer;
       font-family: 'Outfit', system-ui, sans-serif;
       transition: opacity 0.2s ease, transform 0.2s ease;
-      margin-top: 16px;
+      margin-top: 20px;
     }
 
     .obContinue:disabled {
@@ -1372,30 +1425,32 @@
       <div style="width: 38px;"></div>
     </div>
 
-    <div class="obTitle" id="obTitle">What's your status?</div>
-    <div class="obSubtitle" id="obSubtitle">Help us personalize your experience</div>
+    <div class="obMain">
+      <div class="obTitle" id="obTitle">What's your status?</div>
+      <div class="obSubtitle" id="obSubtitle">Help us personalize your experience</div>
 
-    <div class="obViewport">
-      <div class="obTrack" id="obTrack">
-        <div class="obStep" data-step="1">
-          <button class="obOption" type="button" data-value="Working">💼 Working</button>
-          <button class="obOption" type="button" data-value="Studying">📚 Studying</button>
-          <button class="obOption" type="button" data-value="Unemployed">🔍 Unemployed</button>
-          <button class="obOption" type="button" data-value="Other">🏠 Other</button>
-        </div>
+      <div class="obViewport">
+        <div class="obTrack" id="obTrack">
+          <div class="obStep" data-step="1">
+            <button class="obOption" type="button" data-value="Working">💼 Working</button>
+            <button class="obOption" type="button" data-value="Studying">📚 Studying</button>
+            <button class="obOption" type="button" data-value="Unemployed">🔍 Unemployed</button>
+            <button class="obOption" type="button" data-value="Other">🏠 Other</button>
+          </div>
 
-        <div class="obStep" data-step="2">
-          <button class="obOption" type="button" data-value="€0–500">€0–500</button>
-          <button class="obOption" type="button" data-value="€500–1500">€500–1500</button>
-          <button class="obOption" type="button" data-value="€1500–5000">€1500–5000</button>
-          <button class="obOption" type="button" data-value="€5000+">€5000+</button>
-        </div>
+          <div class="obStep" data-step="2">
+            <button class="obOption" type="button" data-value="€0–500">€0–500</button>
+            <button class="obOption" type="button" data-value="€500–1500">€500–1500</button>
+            <button class="obOption" type="button" data-value="€1500–5000">€1500–5000</button>
+            <button class="obOption" type="button" data-value="€5000+">€5000+</button>
+          </div>
 
-        <div class="obStep" data-step="3">
-          <button class="obOption" type="button" data-value="Salary">💰 Salary</button>
-          <button class="obOption" type="button" data-value="Benefits">📋 Benefits</button>
-          <button class="obOption" type="button" data-value="Family">👨‍👩‍👧 Family</button>
-          <button class="obOption" type="button" data-value="Other">✨ Other</button>
+          <div class="obStep" data-step="3">
+            <button class="obOption" type="button" data-value="Salary">💰 Salary</button>
+            <button class="obOption" type="button" data-value="Benefits">📋 Benefits</button>
+            <button class="obOption" type="button" data-value="Family">👨‍👩‍👧 Family</button>
+            <button class="obOption" type="button" data-value="Other">✨ Other</button>
+          </div>
         </div>
       </div>
     </div>
