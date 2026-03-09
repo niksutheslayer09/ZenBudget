@@ -1,0 +1,1730 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>Finance Tracker</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #1a1a1a;
+      --surface: rgba(255, 255, 255, 0.06);
+      --surface-2: rgba(255, 255, 255, 0.08);
+      --text: rgba(255, 255, 255, 0.92);
+      --muted: rgba(255, 255, 255, 0.66);
+      --hairline: rgba(255, 255, 255, 0.10);
+      --accent: #2bd576;
+      --danger: #ff4d4d;
+      --warning: #ffcc66;
+      --radius: 18px;
+      --radius-sm: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --nav-h: 70px;
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-t: env(safe-area-inset-top, 0px);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      overscroll-behavior-y: none;
+      padding-top: var(--safe-t);
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100%;
+      padding: 16px 16px calc(var(--nav-h) + 16px + var(--safe-b));
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 6px 0 14px;
+    }
+
+    .title {
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .card + .card { margin-top: 12px; }
+
+    .row { display: flex; gap: 12px; }
+    .row .card { flex: 1; }
+
+    .card h2 {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .big {
+      margin-top: 10px;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .pos { color: var(--accent); }
+    .neg { color: var(--danger); }
+
+    .divider {
+      height: 1px;
+      background: var(--hairline);
+      margin: 12px 0;
+    }
+
+    .btn {
+      width: 100%;
+      border: 1px solid var(--hairline);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn.primary {
+      background: color-mix(in srgb, var(--accent) 18%, rgba(255,255,255,0.06));
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--hairline));
+    }
+
+    .btn.danger {
+      background: color-mix(in srgb, var(--danger) 15%, rgba(255,255,255,0.06));
+      border-color: color-mix(in srgb, var(--danger) 50%, var(--hairline));
+    }
+
+    .btn.inline {
+      width: auto;
+      padding: 10px 12px;
+      font-size: 13px;
+      border-radius: 12px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .input, select, textarea {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--hairline);
+      background: rgba(0,0,0,0.20);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    textarea { resize: none; min-height: 84px; }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .item .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .item .meta .name {
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item .meta .desc {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item .amt {
+      font-weight: 900;
+      letter-spacing: -0.2px;
+      font-size: 14px;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 12px calc(10px + var(--safe-b));
+      background: rgba(20,20,20,0.92);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--hairline);
+      height: calc(var(--nav-h) + var(--safe-b));
+      display: flex;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .nav .inner {
+      max-width: 520px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 16px;
+      padding: 10px 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .tab.active {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border-color: var(--hairline);
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--hairline);
+    }
+
+    .tab.active .dot { background: var(--accent); }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .twoCol {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .inlineRow {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toggle {
+      appearance: none;
+      width: 46px;
+      height: 28px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid var(--hairline);
+      position: relative;
+      outline: none;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.75);
+      transition: transform 120ms ease;
+    }
+
+    .toggle:checked {
+      background: color-mix(in srgb, var(--accent) 40%, rgba(255,255,255,0.06));
+      border-color: color-mix(in srgb, var(--accent) 60%, var(--hairline));
+    }
+
+    .toggle:checked::after { transform: translateX(18px); background: #eafff2; }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.35;
+    }
+
+    .seg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .seg button {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--hairline);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+    }
+
+    .seg button.active {
+      background: color-mix(in srgb, var(--accent) 20%, rgba(255,255,255,0.06));
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--hairline));
+      color: var(--text);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: rgba(255,255,255,0.06);
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.50);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal.active { display: flex; }
+
+    .sheet {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(26,26,26,0.96);
+      border: 1px solid var(--hairline);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: calc(8px + var(--safe-b));
+    }
+
+    .sheetHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .sheetHeader .h {
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .x {
+      border: 1px solid var(--hairline);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    details {
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+
+    details + details { margin-top: 10px; }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    .mono { font-variant-numeric: tabular-nums; }
+
+    @media (max-width: 360px) {
+      .big { font-size: 28px; }
+      .tab { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="topbar">
+      <div class="title" id="topTitle">Home</div>
+      <div class="pill" id="currencyPill">Currency: <strong id="currencyCode">USD</strong></div>
+    </div>
+
+    <section class="page active" id="page-home">
+      <div class="card">
+        <h2 id="greeting">Hello</h2>
+        <div class="big mono" id="mainBalance">$0.00</div>
+        <div class="sub">
+          <span class="muted">Total across accounts</span>
+          <span class="muted" id="accountsCount">0 accounts</span>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 12px;">
+        <div class="card">
+          <h2>Income (month)</h2>
+          <div class="big mono pos" id="monthIncome">$0.00</div>
+          <div class="sub"><span class="muted" id="monthLabel1">This month</span><span class="muted" id="incomeCount">0 items</span></div>
+        </div>
+        <div class="card">
+          <h2>Expenses (month)</h2>
+          <div class="big mono neg" id="monthExpenses">$0.00</div>
+          <div class="sub"><span class="muted" id="monthLabel2">This month</span><span class="muted" id="expenseCount">0 items</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 12px;">
+        <h2>Savings (month)</h2>
+        <div class="big mono" id="monthSavings">$0.00</div>
+        <div class="sub"><span class="muted">Income - Expenses</span><span class="muted" id="savingsHint">Keep it positive</span></div>
+      </div>
+
+      <div class="card" style="margin-top: 12px;">
+        <h2>Quick actions</h2>
+        <div class="hint">Add a transaction or manage accounts. All data stays on this device (localStorage).</div>
+        <div class="grid2">
+          <button class="btn primary" id="qaAddIncome" type="button">Add income</button>
+          <button class="btn danger" id="qaAddExpense" type="button">Add expense</button>
+        </div>
+        <div style="margin-top: 12px;" class="grid2">
+          <button class="btn" id="qaAccounts" type="button">Accounts</button>
+          <button class="btn" id="qaRecurring" type="button">Recurring</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-transactions">
+      <div class="card">
+        <h2>Add transaction</h2>
+        <div class="seg" role="tablist" aria-label="Transaction type">
+          <button id="txTypeIncome" class="active" type="button">Income</button>
+          <button id="txTypeExpense" type="button">Expense</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="twoCol">
+          <div>
+            <div class="label">Account</div>
+            <select id="txAccount"></select>
+          </div>
+          <div>
+            <div class="label">Category</div>
+            <select id="txCategory"></select>
+          </div>
+        </div>
+
+        <div class="twoCol" style="margin-top: 12px;">
+          <div>
+            <div class="label">Amount</div>
+            <input id="txAmount" class="input" inputmode="decimal" placeholder="0.00" />
+          </div>
+          <div>
+            <div class="label">Date</div>
+            <input id="txDate" class="input" type="date" />
+          </div>
+        </div>
+
+        <div style="margin-top: 12px;">
+          <div class="label">Note (optional)</div>
+          <textarea id="txNote" placeholder="e.g. Grocery run, salary, coffee..."></textarea>
+        </div>
+
+        <div class="grid2" style="margin-top: 12px;">
+          <button class="btn primary" id="txSave" type="button">Save</button>
+          <button class="btn" id="txClear" type="button">Clear</button>
+        </div>
+
+        <div class="hint" id="txHint">Tip: swipe isn’t needed—tap Save. You can delete from the list below.</div>
+      </div>
+
+      <div class="card" style="margin-top: 12px;">
+        <div class="inlineRow">
+          <h2>All transactions</h2>
+          <span class="badge" id="txTotalCount">0</span>
+        </div>
+        <div class="list" id="txList"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-recurring">
+      <div class="card">
+        <h2>Add recurring payment</h2>
+        <div class="twoCol" style="margin-top: 12px;">
+          <div>
+            <div class="label">Name</div>
+            <input id="recName" class="input" placeholder="Rent" />
+          </div>
+          <div>
+            <div class="label">Amount</div>
+            <input id="recAmount" class="input" inputmode="decimal" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="twoCol" style="margin-top: 12px;">
+          <div>
+            <div class="label">Next payment date</div>
+            <input id="recNext" class="input" type="date" />
+          </div>
+          <div>
+            <div class="label">Account</div>
+            <select id="recAccount"></select>
+          </div>
+        </div>
+        <div style="margin-top: 12px;" class="grid2">
+          <button class="btn primary" id="recAdd" type="button">Add</button>
+          <button class="btn" id="recClear" type="button">Clear</button>
+        </div>
+        <div class="hint">Marking as paid will create an expense transaction and auto-advance the next date by 1 month.</div>
+      </div>
+
+      <div class="card" style="margin-top: 12px;">
+        <div class="inlineRow">
+          <h2>Recurring payments</h2>
+          <span class="badge" id="recTotalCount">0</span>
+        </div>
+        <div class="list" id="recList"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-accounts">
+      <div class="card">
+        <div class="inlineRow">
+          <h2>Accounts</h2>
+          <button class="btn inline primary" id="acctAddBtn" type="button">Add</button>
+        </div>
+        <div class="hint">Balances are derived from your transaction history.</div>
+      </div>
+
+      <div style="margin-top: 12px;" id="acctList"></div>
+
+      <div class="card" style="margin-top: 12px;">
+        <div class="inlineRow">
+          <h2>Data</h2>
+          <button class="btn inline" id="exportBtn" type="button">Export</button>
+        </div>
+        <div class="grid2" style="margin-top: 12px;">
+          <button class="btn" id="importBtn" type="button">Import</button>
+          <button class="btn danger" id="resetBtn" type="button">Reset</button>
+        </div>
+        <div class="hint">Export copies JSON to clipboard. Import will paste JSON from clipboard. Reset clears localStorage.</div>
+      </div>
+    </section>
+  </div>
+
+  <nav class="nav" aria-label="Bottom navigation">
+    <div class="inner">
+      <button class="tab active" id="tab-home" type="button" data-tab="home">
+        <span class="dot"></span>
+        <span>Home</span>
+      </button>
+      <button class="tab" id="tab-transactions" type="button" data-tab="transactions">
+        <span class="dot"></span>
+        <span>Transactions</span>
+      </button>
+      <button class="tab" id="tab-recurring" type="button" data-tab="recurring">
+        <span class="dot"></span>
+        <span>Recurring</span>
+      </button>
+      <button class="tab" id="tab-accounts" type="button" data-tab="accounts">
+        <span class="dot"></span>
+        <span>Accounts</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="modal" id="modal">
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="sheetHeader">
+        <div class="h" id="modalTitle">Modal</div>
+        <button class="x" id="modalClose" type="button">Close</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'finance_miniapp_v1';
+
+      const DEFAULT_CATEGORIES = {
+        income: ['Salary', 'Bonus', 'Gift', 'Interest', 'Other'],
+        expense: ['Food', 'Transport', 'Bills', 'Rent', 'Subscriptions', 'Shopping', 'Health', 'Other']
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const state = {
+        tab: 'home',
+        txType: 'income',
+        currency: 'USD'
+      };
+
+      function nowISODate() {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+
+      function monthKey(dateStr) {
+        const d = new Date(dateStr + 'T00:00:00');
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        return `${yyyy}-${mm}`;
+      }
+
+      function addMonths(dateStr, months) {
+        const d = new Date(dateStr + 'T00:00:00');
+        const day = d.getDate();
+        d.setMonth(d.getMonth() + months);
+        if (d.getDate() !== day) {
+          d.setDate(0);
+        }
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+
+      function safeParseNumber(v) {
+        if (typeof v !== 'string') return null;
+        const n = Number(v.replace(',', '.').trim());
+        if (!Number.isFinite(n)) return null;
+        return n;
+      }
+
+      function uid(prefix) {
+        return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
+      }
+
+      function loadData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch {
+          return null;
+        }
+      }
+
+      function saveData(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function ensureData() {
+        let data = loadData();
+        if (!data || typeof data !== 'object') {
+          data = {
+            version: 1,
+            settings: { currency: 'USD' },
+            accounts: [
+              { id: uid('acct'), name: 'Main' },
+              { id: uid('acct'), name: 'Investment' }
+            ],
+            transactions: [],
+            recurring: []
+          };
+          saveData(data);
+        }
+        if (!data.settings) data.settings = { currency: 'USD' };
+        if (!Array.isArray(data.accounts)) data.accounts = [];
+        if (!Array.isArray(data.transactions)) data.transactions = [];
+        if (!Array.isArray(data.recurring)) data.recurring = [];
+        if (!data.settings.currency) data.settings.currency = 'USD';
+        return data;
+      }
+
+      function fmtMoney(amount) {
+        const n = Number(amount) || 0;
+        const sign = n < 0 ? '-' : '';
+        const abs = Math.abs(n);
+        return `${sign}${currencySymbol()}${abs.toFixed(2)}`;
+      }
+
+      function currencySymbol() {
+        const c = state.currency || 'USD';
+        if (c === 'USD') return '$';
+        if (c === 'EUR') return '€';
+        if (c === 'GBP') return '£';
+        if (c === 'RUB') return '₽';
+        return '';
+      }
+
+      function sortByDateDesc(a, b) {
+        const da = new Date((a.date || '1970-01-01') + 'T00:00:00').getTime();
+        const db = new Date((b.date || '1970-01-01') + 'T00:00:00').getTime();
+        return db - da;
+      }
+
+      function accountById(data, id) {
+        return data.accounts.find(a => a.id === id) || null;
+      }
+
+      function txSignedAmount(tx) {
+        const amt = Number(tx.amount) || 0;
+        return tx.type === 'income' ? amt : -amt;
+      }
+
+      function accountBalance(data, accountId) {
+        let sum = 0;
+        for (const tx of data.transactions) {
+          if (tx.accountId !== accountId) continue;
+          sum += txSignedAmount(tx);
+        }
+        return sum;
+      }
+
+      function totalBalance(data) {
+        return data.accounts.reduce((acc, a) => acc + accountBalance(data, a.id), 0);
+      }
+
+      function monthSummary(data, key) {
+        let income = 0;
+        let expenses = 0;
+        let incomeCount = 0;
+        let expenseCount = 0;
+        for (const tx of data.transactions) {
+          if (!tx.date) continue;
+          if (monthKey(tx.date) !== key) continue;
+          const amt = Number(tx.amount) || 0;
+          if (tx.type === 'income') {
+            income += amt;
+            incomeCount++;
+          } else {
+            expenses += amt;
+            expenseCount++;
+          }
+        }
+        return { income, expenses, savings: income - expenses, incomeCount, expenseCount };
+      }
+
+      function applyTelegramTheme() {
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        if (!tg) return;
+
+        try {
+          tg.expand();
+          tg.ready();
+        } catch {
+        }
+
+        const tp = tg.themeParams || {};
+
+        const bg = tp.bg_color || '#1a1a1a';
+        const text = tp.text_color || 'rgba(255,255,255,0.92)';
+        const hint = tp.hint_color || 'rgba(255,255,255,0.66)';
+        const secondary = tp.secondary_bg_color || 'rgba(255,255,255,0.06)';
+        const btn = tp.button_color || '#2bd576';
+        const destructive = tp.destructive_text_color || '#ff4d4d';
+
+        document.documentElement.style.setProperty('--bg', bg);
+        document.documentElement.style.setProperty('--text', text);
+        document.documentElement.style.setProperty('--muted', hint);
+        document.documentElement.style.setProperty('--surface', secondary);
+        document.documentElement.style.setProperty('--accent', btn);
+        document.documentElement.style.setProperty('--danger', destructive);
+
+        try {
+          tg.setHeaderColor('secondary_bg_color');
+          tg.setBackgroundColor(bg);
+        } catch {
+        }
+      }
+
+      function tgUserName() {
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        const user = tg && tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
+        if (!user) return 'there';
+        const first = user.first_name || '';
+        const last = user.last_name || '';
+        const full = `${first} ${last}`.trim();
+        return full || user.username || 'there';
+      }
+
+      function setTab(tab) {
+        state.tab = tab;
+        const title = tab.charAt(0).toUpperCase() + tab.slice(1);
+        $('topTitle').textContent = title;
+
+        for (const el of document.querySelectorAll('.page')) {
+          el.classList.remove('active');
+        }
+        for (const el of document.querySelectorAll('.tab')) {
+          el.classList.remove('active');
+        }
+
+        const page = $('page-' + tab);
+        if (page) page.classList.add('active');
+        const btn = $('tab-' + tab);
+        if (btn) btn.classList.add('active');
+
+        render();
+      }
+
+      function setTxType(type) {
+        state.txType = type;
+        $('txTypeIncome').classList.toggle('active', type === 'income');
+        $('txTypeExpense').classList.toggle('active', type === 'expense');
+        renderTxCategorySelect();
+      }
+
+      function renderTxCategorySelect() {
+        const cats = state.txType === 'income' ? DEFAULT_CATEGORIES.income : DEFAULT_CATEGORIES.expense;
+        const sel = $('txCategory');
+        sel.innerHTML = '';
+        for (const c of cats) {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          sel.appendChild(opt);
+        }
+      }
+
+      function renderAccountSelects(data) {
+        const selects = [$('txAccount'), $('recAccount')];
+        for (const sel of selects) {
+          sel.innerHTML = '';
+          for (const a of data.accounts) {
+            const opt = document.createElement('option');
+            opt.value = a.id;
+            opt.textContent = a.name;
+            sel.appendChild(opt);
+          }
+        }
+      }
+
+      function renderHome(data) {
+        $('greeting').textContent = `Hello, ${tgUserName()}`;
+        $('currencyCode').textContent = state.currency;
+
+        const total = totalBalance(data);
+        $('mainBalance').textContent = fmtMoney(total);
+        $('mainBalance').classList.toggle('pos', total >= 0);
+        $('mainBalance').classList.toggle('neg', total < 0);
+
+        $('accountsCount').textContent = `${data.accounts.length} account${data.accounts.length === 1 ? '' : 's'}`;
+
+        const mk = monthKey(nowISODate());
+        const ms = monthSummary(data, mk);
+
+        $('monthIncome').textContent = fmtMoney(ms.income);
+        $('monthExpenses').textContent = fmtMoney(ms.expenses);
+        $('monthSavings').textContent = fmtMoney(ms.savings);
+
+        $('monthSavings').classList.toggle('pos', ms.savings >= 0);
+        $('monthSavings').classList.toggle('neg', ms.savings < 0);
+
+        $('incomeCount').textContent = `${ms.incomeCount} item${ms.incomeCount === 1 ? '' : 's'}`;
+        $('expenseCount').textContent = `${ms.expenseCount} item${ms.expenseCount === 1 ? '' : 's'}`;
+
+        const hint = ms.savings >= 0 ? 'Nice. Keep the streak.' : 'Watch spending this month.';
+        $('savingsHint').textContent = hint;
+
+        const monthName = new Date().toLocaleString(undefined, { month: 'long' });
+        $('monthLabel1').textContent = monthName;
+        $('monthLabel2').textContent = monthName;
+      }
+
+      function renderTransactions(data) {
+        $('txTotalCount').textContent = String(data.transactions.length);
+
+        const list = $('txList');
+        list.innerHTML = '';
+
+        const txs = [...data.transactions].sort(sortByDateDesc);
+        if (txs.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'hint';
+          empty.textContent = 'No transactions yet. Add your first one above.';
+          list.appendChild(empty);
+          return;
+        }
+
+        for (const tx of txs) {
+          const acct = accountById(data, tx.accountId);
+          const item = document.createElement('div');
+          item.className = 'item';
+
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+
+          const name = document.createElement('div');
+          name.className = 'name';
+          name.textContent = tx.category || (tx.type === 'income' ? 'Income' : 'Expense');
+
+          const desc = document.createElement('div');
+          desc.className = 'desc';
+          const acctName = acct ? acct.name : 'Unknown account';
+          const note = (tx.note || '').trim();
+          desc.textContent = `${tx.date || ''} • ${acctName}${note ? ' • ' + note : ''}`;
+
+          meta.appendChild(name);
+          meta.appendChild(desc);
+
+          const right = document.createElement('div');
+          right.style.display = 'flex';
+          right.style.flexDirection = 'column';
+          right.style.alignItems = 'flex-end';
+          right.style.gap = '8px';
+
+          const amt = document.createElement('div');
+          amt.className = 'amt mono ' + (tx.type === 'income' ? 'pos' : 'neg');
+          const signed = tx.type === 'income' ? Number(tx.amount || 0) : -Number(tx.amount || 0);
+          amt.textContent = fmtMoney(signed);
+
+          const del = document.createElement('button');
+          del.className = 'btn inline';
+          del.textContent = 'Delete';
+          del.type = 'button';
+          del.addEventListener('click', () => {
+            confirmAction('Delete transaction?', 'This cannot be undone.', () => {
+              const d = ensureData();
+              d.transactions = d.transactions.filter(t => t.id !== tx.id);
+              saveData(d);
+              render();
+            });
+          });
+
+          right.appendChild(amt);
+          right.appendChild(del);
+
+          item.appendChild(meta);
+          item.appendChild(right);
+          list.appendChild(item);
+        }
+      }
+
+      function recurringIsPaidForThisMonth(rec) {
+        return rec.lastPaidMonth === monthKey(nowISODate());
+      }
+
+      function renderRecurring(data) {
+        $('recTotalCount').textContent = String(data.recurring.length);
+
+        const list = $('recList');
+        list.innerHTML = '';
+
+        const items = [...data.recurring].sort((a, b) => {
+          const da = new Date((a.nextDate || '1970-01-01') + 'T00:00:00').getTime();
+          const db = new Date((b.nextDate || '1970-01-01') + 'T00:00:00').getTime();
+          return da - db;
+        });
+
+        if (items.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'hint';
+          empty.textContent = 'No recurring payments yet. Add one above.';
+          list.appendChild(empty);
+          return;
+        }
+
+        for (const rec of items) {
+          const acct = accountById(data, rec.accountId);
+          const item = document.createElement('div');
+          item.className = 'item';
+
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+
+          const name = document.createElement('div');
+          name.className = 'name';
+          name.textContent = rec.name || 'Recurring';
+
+          const desc = document.createElement('div');
+          desc.className = 'desc';
+          const acctName = acct ? acct.name : 'Unknown account';
+          const paid = recurringIsPaidForThisMonth(rec);
+          const paidText = paid ? `Paid (${rec.lastPaidMonth})` : 'Not paid yet';
+          desc.textContent = `${acctName} • Next: ${rec.nextDate || ''} • ${paidText}`;
+
+          meta.appendChild(name);
+          meta.appendChild(desc);
+
+          const right = document.createElement('div');
+          right.style.display = 'flex';
+          right.style.flexDirection = 'column';
+          right.style.alignItems = 'flex-end';
+          right.style.gap = '10px';
+
+          const amt = document.createElement('div');
+          amt.className = 'amt mono neg';
+          amt.textContent = fmtMoney(-Number(rec.amount || 0));
+
+          const togg = document.createElement('input');
+          togg.type = 'checkbox';
+          togg.className = 'toggle';
+          togg.checked = paid;
+
+          togg.addEventListener('change', () => {
+            const d = ensureData();
+            const r = d.recurring.find(x => x.id === rec.id);
+            if (!r) return;
+
+            const nowMonth = monthKey(nowISODate());
+            const isPaid = r.lastPaidMonth === nowMonth;
+
+            if (!isPaid) {
+              const tx = {
+                id: uid('tx'),
+                type: 'expense',
+                accountId: r.accountId,
+                category: r.name || 'Recurring',
+                amount: Number(r.amount) || 0,
+                date: r.nextDate || nowISODate(),
+                note: 'Recurring payment'
+              };
+              d.transactions.push(tx);
+              r.lastPaidMonth = nowMonth;
+              r.nextDate = addMonths(r.nextDate || nowISODate(), 1);
+              saveData(d);
+              render();
+            } else {
+              togg.checked = true;
+            }
+          });
+
+          const del = document.createElement('button');
+          del.className = 'btn inline';
+          del.textContent = 'Delete';
+          del.type = 'button';
+          del.addEventListener('click', () => {
+            confirmAction('Delete recurring payment?', 'This cannot be undone.', () => {
+              const d = ensureData();
+              d.recurring = d.recurring.filter(x => x.id !== rec.id);
+              saveData(d);
+              render();
+            });
+          });
+
+          right.appendChild(amt);
+          right.appendChild(togg);
+          right.appendChild(del);
+
+          item.appendChild(meta);
+          item.appendChild(right);
+          list.appendChild(item);
+        }
+      }
+
+      function renderAccounts(data) {
+        const container = $('acctList');
+        container.innerHTML = '';
+
+        if (data.accounts.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'card';
+          empty.innerHTML = '<h2>No accounts</h2><div class="hint">Add an account to start tracking.</div>';
+          container.appendChild(empty);
+          return;
+        }
+
+        for (const acct of data.accounts) {
+          const bal = accountBalance(data, acct.id);
+
+          const details = document.createElement('details');
+          details.open = false;
+
+          const sum = document.createElement('summary');
+
+          const left = document.createElement('div');
+          left.style.display = 'flex';
+          left.style.flexDirection = 'column';
+          left.style.gap = '2px';
+          left.style.minWidth = '0';
+
+          const name = document.createElement('div');
+          name.style.fontWeight = '900';
+          name.style.whiteSpace = 'nowrap';
+          name.style.overflow = 'hidden';
+          name.style.textOverflow = 'ellipsis';
+          name.textContent = acct.name;
+
+          const sub = document.createElement('div');
+          sub.className = 'hint';
+          sub.style.marginTop = '0';
+          sub.textContent = 'Tap to view history and actions';
+
+          left.appendChild(name);
+          left.appendChild(sub);
+
+          const right = document.createElement('div');
+          right.className = 'mono';
+          right.style.fontWeight = '900';
+          right.style.whiteSpace = 'nowrap';
+          right.style.color = bal >= 0 ? 'var(--accent)' : 'var(--danger)';
+          right.textContent = fmtMoney(bal);
+
+          sum.appendChild(left);
+          sum.appendChild(right);
+
+          const body = document.createElement('div');
+          body.style.padding = '12px';
+
+          const actions = document.createElement('div');
+          actions.className = 'grid2';
+
+          const dep = document.createElement('button');
+          dep.className = 'btn primary';
+          dep.type = 'button';
+          dep.textContent = 'Deposit';
+          dep.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAccountAdjustment(acct.id, 'income');
+          });
+
+          const wd = document.createElement('button');
+          wd.className = 'btn danger';
+          wd.type = 'button';
+          wd.textContent = 'Withdraw';
+          wd.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAccountAdjustment(acct.id, 'expense');
+          });
+
+          actions.appendChild(dep);
+          actions.appendChild(wd);
+
+          const del = document.createElement('button');
+          del.className = 'btn';
+          del.type = 'button';
+          del.style.marginTop = '12px';
+          del.textContent = 'Delete account';
+          del.addEventListener('click', (e) => {
+            e.preventDefault();
+            confirmAction('Delete account?', 'Transactions will remain but the account will be removed.', () => {
+              const d = ensureData();
+              d.accounts = d.accounts.filter(a => a.id !== acct.id);
+              saveData(d);
+              render();
+            });
+          });
+
+          const histTitle = document.createElement('div');
+          histTitle.className = 'label';
+          histTitle.style.marginTop = '14px';
+          histTitle.textContent = 'History';
+
+          const hist = document.createElement('div');
+          hist.className = 'list';
+          hist.style.marginTop = '8px';
+
+          const txs = data.transactions.filter(t => t.accountId === acct.id).sort(sortByDateDesc);
+          if (txs.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'hint';
+            empty.textContent = 'No transactions for this account yet.';
+            hist.appendChild(empty);
+          } else {
+            for (const tx of txs.slice(0, 20)) {
+              const item = document.createElement('div');
+              item.className = 'item';
+              item.style.padding = '10px 12px';
+
+              const m = document.createElement('div');
+              m.className = 'meta';
+
+              const n = document.createElement('div');
+              n.className = 'name';
+              n.textContent = tx.category || (tx.type === 'income' ? 'Income' : 'Expense');
+
+              const dsc = document.createElement('div');
+              dsc.className = 'desc';
+              dsc.textContent = `${tx.date || ''}${tx.note ? ' • ' + tx.note : ''}`;
+
+              m.appendChild(n);
+              m.appendChild(dsc);
+
+              const a = document.createElement('div');
+              a.className = 'amt mono ' + (tx.type === 'income' ? 'pos' : 'neg');
+              const signed = tx.type === 'income' ? Number(tx.amount || 0) : -Number(tx.amount || 0);
+              a.textContent = fmtMoney(signed);
+
+              item.appendChild(m);
+              item.appendChild(a);
+              hist.appendChild(item);
+            }
+
+            if (txs.length > 20) {
+              const more = document.createElement('div');
+              more.className = 'hint';
+              more.textContent = `Showing latest 20 of ${txs.length}. See full list in Transactions tab.`;
+              hist.appendChild(more);
+            }
+          }
+
+          body.appendChild(actions);
+          body.appendChild(histTitle);
+          body.appendChild(hist);
+          body.appendChild(del);
+
+          details.appendChild(sum);
+          details.appendChild(body);
+
+          container.appendChild(details);
+        }
+      }
+
+      function render() {
+        const data = ensureData();
+        state.currency = data.settings.currency || 'USD';
+        $('currencyCode').textContent = state.currency;
+
+        renderAccountSelects(data);
+        renderTxCategorySelect();
+
+        if (state.tab === 'home') renderHome(data);
+        if (state.tab === 'transactions') renderTransactions(data);
+        if (state.tab === 'recurring') renderRecurring(data);
+        if (state.tab === 'accounts') renderAccounts(data);
+      }
+
+      function modalOpen(title, bodyEl) {
+        $('modalTitle').textContent = title;
+        const body = $('modalBody');
+        body.innerHTML = '';
+        body.appendChild(bodyEl);
+        $('modal').classList.add('active');
+      }
+
+      function modalClose() {
+        $('modal').classList.remove('active');
+        $('modalBody').innerHTML = '';
+      }
+
+      function confirmAction(title, text, onYes) {
+        const wrap = document.createElement('div');
+        const p = document.createElement('div');
+        p.className = 'hint';
+        p.textContent = text;
+
+        const buttons = document.createElement('div');
+        buttons.className = 'grid2';
+        buttons.style.marginTop = '12px';
+
+        const yes = document.createElement('button');
+        yes.className = 'btn danger';
+        yes.type = 'button';
+        yes.textContent = 'Yes';
+        yes.addEventListener('click', () => {
+          modalClose();
+          onYes();
+        });
+
+        const no = document.createElement('button');
+        no.className = 'btn';
+        no.type = 'button';
+        no.textContent = 'Cancel';
+        no.addEventListener('click', modalClose);
+
+        buttons.appendChild(yes);
+        buttons.appendChild(no);
+
+        wrap.appendChild(p);
+        wrap.appendChild(buttons);
+
+        modalOpen(title, wrap);
+      }
+
+      function openAccountCreate() {
+        const wrap = document.createElement('div');
+
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.textContent = 'Account name';
+
+        const input = document.createElement('input');
+        input.className = 'input';
+        input.placeholder = 'Main';
+
+        const actions = document.createElement('div');
+        actions.className = 'grid2';
+        actions.style.marginTop = '12px';
+
+        const save = document.createElement('button');
+        save.className = 'btn primary';
+        save.type = 'button';
+        save.textContent = 'Create';
+        save.addEventListener('click', () => {
+          const name = (input.value || '').trim();
+          if (!name) {
+            input.focus();
+            return;
+          }
+          const d = ensureData();
+          d.accounts.push({ id: uid('acct'), name });
+          saveData(d);
+          modalClose();
+          render();
+        });
+
+        const cancel = document.createElement('button');
+        cancel.className = 'btn';
+        cancel.type = 'button';
+        cancel.textContent = 'Cancel';
+        cancel.addEventListener('click', modalClose);
+
+        actions.appendChild(save);
+        actions.appendChild(cancel);
+
+        wrap.appendChild(label);
+        wrap.appendChild(input);
+        wrap.appendChild(actions);
+
+        modalOpen('Add account', wrap);
+        setTimeout(() => input.focus(), 0);
+      }
+
+      function openAccountAdjustment(accountId, type) {
+        const d = ensureData();
+        const acct = accountById(d, accountId);
+        if (!acct) return;
+
+        const wrap = document.createElement('div');
+
+        const top = document.createElement('div');
+        top.className = 'hint';
+        top.textContent = `${type === 'income' ? 'Deposit' : 'Withdrawal'} for ${acct.name}`;
+
+        const amountLabel = document.createElement('div');
+        amountLabel.className = 'label';
+        amountLabel.style.marginTop = '12px';
+        amountLabel.textContent = 'Amount';
+
+        const amount = document.createElement('input');
+        amount.className = 'input';
+        amount.inputMode = 'decimal';
+        amount.placeholder = '0.00';
+
+        const dateLabel = document.createElement('div');
+        dateLabel.className = 'label';
+        dateLabel.style.marginTop = '12px';
+        dateLabel.textContent = 'Date';
+
+        const date = document.createElement('input');
+        date.className = 'input';
+        date.type = 'date';
+        date.value = nowISODate();
+
+        const noteLabel = document.createElement('div');
+        noteLabel.className = 'label';
+        noteLabel.style.marginTop = '12px';
+        noteLabel.textContent = 'Note (optional)';
+
+        const note = document.createElement('input');
+        note.className = 'input';
+        note.placeholder = 'e.g. cash in/out';
+
+        const actions = document.createElement('div');
+        actions.className = 'grid2';
+        actions.style.marginTop = '12px';
+
+        const save = document.createElement('button');
+        save.className = 'btn ' + (type === 'income' ? 'primary' : 'danger');
+        save.type = 'button';
+        save.textContent = 'Save';
+        save.addEventListener('click', () => {
+          const amt = safeParseNumber(amount.value);
+          if (amt === null || amt <= 0) {
+            amount.focus();
+            return;
+          }
+          const d2 = ensureData();
+          d2.transactions.push({
+            id: uid('tx'),
+            type,
+            accountId,
+            category: type === 'income' ? 'Deposit' : 'Withdrawal',
+            amount: amt,
+            date: date.value || nowISODate(),
+            note: (note.value || '').trim()
+          });
+          saveData(d2);
+          modalClose();
+          render();
+        });
+
+        const cancel = document.createElement('button');
+        cancel.className = 'btn';
+        cancel.type = 'button';
+        cancel.textContent = 'Cancel';
+        cancel.addEventListener('click', modalClose);
+
+        actions.appendChild(save);
+        actions.appendChild(cancel);
+
+        wrap.appendChild(top);
+        wrap.appendChild(amountLabel);
+        wrap.appendChild(amount);
+        wrap.appendChild(dateLabel);
+        wrap.appendChild(date);
+        wrap.appendChild(noteLabel);
+        wrap.appendChild(note);
+        wrap.appendChild(actions);
+
+        modalOpen(type === 'income' ? 'Deposit' : 'Withdraw', wrap);
+        setTimeout(() => amount.focus(), 0);
+      }
+
+      function resetTxForm() {
+        $('txAmount').value = '';
+        $('txDate').value = nowISODate();
+        $('txNote').value = '';
+      }
+
+      function initEvents() {
+        $('modalClose').addEventListener('click', modalClose);
+        $('modal').addEventListener('click', (e) => {
+          if (e.target === $('modal')) modalClose();
+        });
+
+        for (const t of document.querySelectorAll('.tab')) {
+          t.addEventListener('click', () => setTab(t.dataset.tab));
+        }
+
+        $('txTypeIncome').addEventListener('click', () => setTxType('income'));
+        $('txTypeExpense').addEventListener('click', () => setTxType('expense'));
+
+        $('txSave').addEventListener('click', () => {
+          const d = ensureData();
+          if (d.accounts.length === 0) {
+            setTab('accounts');
+            openAccountCreate();
+            return;
+          }
+
+          const accountId = $('txAccount').value;
+          const category = $('txCategory').value;
+          const amt = safeParseNumber($('txAmount').value);
+          if (amt === null || amt <= 0) {
+            $('txAmount').focus();
+            return;
+          }
+
+          const date = $('txDate').value || nowISODate();
+          const note = ($('txNote').value || '').trim();
+
+          d.transactions.push({
+            id: uid('tx'),
+            type: state.txType,
+            accountId,
+            category,
+            amount: amt,
+            date,
+            note
+          });
+
+          saveData(d);
+          resetTxForm();
+          render();
+
+          try {
+            const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+          } catch {
+          }
+        });
+
+        $('txClear').addEventListener('click', resetTxForm);
+
+        $('recAdd').addEventListener('click', () => {
+          const d = ensureData();
+          if (d.accounts.length === 0) {
+            setTab('accounts');
+            openAccountCreate();
+            return;
+          }
+
+          const name = ($('recName').value || '').trim();
+          const amt = safeParseNumber($('recAmount').value);
+          const nextDate = $('recNext').value || nowISODate();
+          const accountId = $('recAccount').value;
+
+          if (!name) {
+            $('recName').focus();
+            return;
+          }
+          if (amt === null || amt <= 0) {
+            $('recAmount').focus();
+            return;
+          }
+
+          d.recurring.push({
+            id: uid('rec'),
+            name,
+            amount: amt,
+            nextDate,
+            accountId,
+            lastPaidMonth: null
+          });
+
+          saveData(d);
+          $('recName').value = '';
+          $('recAmount').value = '';
+          $('recNext').value = nowISODate();
+          render();
+        });
+
+        $('recClear').addEventListener('click', () => {
+          $('recName').value = '';
+          $('recAmount').value = '';
+          $('recNext').value = nowISODate();
+        });
+
+        $('acctAddBtn').addEventListener('click', openAccountCreate);
+
+        $('qaAddIncome').addEventListener('click', () => {
+          setTab('transactions');
+          setTxType('income');
+        });
+        $('qaAddExpense').addEventListener('click', () => {
+          setTab('transactions');
+          setTxType('expense');
+        });
+        $('qaAccounts').addEventListener('click', () => setTab('accounts'));
+        $('qaRecurring').addEventListener('click', () => setTab('recurring'));
+
+        $('exportBtn').addEventListener('click', async () => {
+          const d = ensureData();
+          const json = JSON.stringify(d, null, 2);
+          try {
+            await navigator.clipboard.writeText(json);
+            infoModal('Exported', 'Data JSON copied to clipboard.');
+          } catch {
+            infoModal('Export failed', 'Clipboard access was blocked.');
+          }
+        });
+
+        $('importBtn').addEventListener('click', async () => {
+          try {
+            const txt = await navigator.clipboard.readText();
+            const parsed = JSON.parse(txt);
+            if (!parsed || typeof parsed !== 'object') throw new Error('bad');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+            infoModal('Imported', 'Data imported from clipboard.');
+            render();
+          } catch {
+            infoModal('Import failed', 'Clipboard did not contain valid JSON.');
+          }
+        });
+
+        $('resetBtn').addEventListener('click', () => {
+          confirmAction('Reset all data?', 'This clears localStorage on this device.', () => {
+            localStorage.removeItem(STORAGE_KEY);
+            const d = ensureData();
+            state.currency = d.settings.currency;
+            resetTxForm();
+            $('recNext').value = nowISODate();
+            render();
+          });
+        });
+
+        $('currencyPill').addEventListener('click', () => {
+          const wrap = document.createElement('div');
+          const hint = document.createElement('div');
+          hint.className = 'hint';
+          hint.textContent = 'Pick a currency code used for display.';
+
+          const selLabel = document.createElement('div');
+          selLabel.className = 'label';
+          selLabel.style.marginTop = '12px';
+          selLabel.textContent = 'Currency';
+
+          const sel = document.createElement('select');
+          sel.className = 'input';
+
+          const opts = ['USD', 'EUR', 'GBP', 'RUB'];
+          for (const o of opts) {
+            const opt = document.createElement('option');
+            opt.value = o;
+            opt.textContent = o;
+            if (o === state.currency) opt.selected = true;
+            sel.appendChild(opt);
+          }
+
+          const actions = document.createElement('div');
+          actions.className = 'grid2';
+          actions.style.marginTop = '12px';
+
+          const save = document.createElement('button');
+          save.className = 'btn primary';
+          save.type = 'button';
+          save.textContent = 'Save';
+          save.addEventListener('click', () => {
+            const d = ensureData();
+            d.settings.currency = sel.value;
+            saveData(d);
+            modalClose();
+            render();
+          });
+
+          const cancel = document.createElement('button');
+          cancel.className = 'btn';
+          cancel.type = 'button';
+          cancel.textContent = 'Cancel';
+          cancel.addEventListener('click', modalClose);
+
+          actions.appendChild(save);
+          actions.appendChild(cancel);
+
+          wrap.appendChild(hint);
+          wrap.appendChild(selLabel);
+          wrap.appendChild(sel);
+          wrap.appendChild(actions);
+
+          modalOpen('Currency', wrap);
+        });
+      }
+
+      function infoModal(title, text) {
+        const wrap = document.createElement('div');
+        const p = document.createElement('div');
+        p.className = 'hint';
+        p.textContent = text;
+
+        const ok = document.createElement('button');
+        ok.className = 'btn primary';
+        ok.type = 'button';
+        ok.style.marginTop = '12px';
+        ok.textContent = 'OK';
+        ok.addEventListener('click', modalClose);
+
+        wrap.appendChild(p);
+        wrap.appendChild(ok);
+        modalOpen(title, wrap);
+      }
+
+      function init() {
+        applyTelegramTheme();
+        const d = ensureData();
+        state.currency = d.settings.currency || 'USD';
+
+        $('txDate').value = nowISODate();
+        $('recNext').value = nowISODate();
+
+        initEvents();
+        setTxType('income');
+        setTab('home');
+
+        window.addEventListener('storage', () => render());
+        render();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
