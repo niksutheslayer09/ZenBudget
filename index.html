@@ -15,13 +15,13 @@
       --surface: rgba(255,255,255,0.04);
       --surface-2: rgba(255,255,255,0.06);
       --text: #ffffff;
-      --muted: rgba(255,255,255,0.35);
-      --hairline: rgba(255,255,255,0.07);
-      --accent: #4FC3F7;
-      --accent-glow: rgba(79,195,247,0.3);
-      --danger: #ff6b6b;
-      --radius: 16px;
-      --radius-sm: 16px;
+      --muted: rgba(255,255,255,0.5);
+      --hairline: rgba(255,255,255,0.10);
+      --accent: #00E5A0;
+      --accent-glow: rgba(0,229,160,0.26);
+      --danger: #FF2D55;
+      --radius: 18px;
+      --radius-sm: 18px;
       --shadow: 0 4px 24px rgba(0,0,0,0.5);
       --nav-h: 56px;
       --safe-b: env(safe-area-inset-bottom, 0px);
@@ -106,12 +106,12 @@
     }
 
     .card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 16px;
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
       width: 100%;
       overflow: hidden;
       transition: all 0.2s ease;
@@ -194,14 +194,14 @@
     .btn:active { transform: scale(0.97); opacity: 0.9; }
 
     .btn.primary {
-      background: rgba(79,195,247,0.14);
-      border-color: rgba(79,195,247,0.30);
+      background: rgba(0,229,160,0.16);
+      border-color: rgba(0,229,160,0.35);
       color: var(--accent);
     }
 
     .btn.danger {
-      background: rgba(255,107,107,0.12);
-      border-color: rgba(255,107,107,0.30);
+      background: rgba(255,45,85,0.14);
+      border-color: rgba(255,45,85,0.35);
       color: var(--danger);
     }
 
@@ -250,7 +250,19 @@
     }
 
     .input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.25); }
-    .input:focus, select:focus, textarea:focus { border-color: rgba(79,195,247,0.5); box-shadow: 0 0 0 2px rgba(79,195,247,0.10); }
+    .input:focus, select:focus, textarea:focus { border-color: rgba(0,229,160,0.5); box-shadow: 0 0 0 2px rgba(0,229,160,0.10); }
+
+    input[type="date"], input[type="time"] {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      text-align: center;
+      white-space: nowrap;
+      padding: 12px;
+    }
+
+    input[type="date"]::-webkit-datetime-edit { text-align: center; }
 
     textarea { resize: none; min-height: 84px; }
 
@@ -341,7 +353,7 @@
       padding: 6px 4px;
       border: none;
       background: transparent;
-      color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.4);
       cursor: pointer;
       user-select: none;
       font-size: 10px;
@@ -354,8 +366,10 @@
     }
 
     .tab.active {
-      color: #000000;
-      background: var(--accent);
+      color: #FFFFFF;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      font-weight: 600;
     }
 
     .dot { display: none; }
@@ -478,9 +492,9 @@
     .chartBlock {
       overflow: hidden;
       padding: 16px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
     }
 
     .chartTop {
@@ -522,8 +536,58 @@
     }
 
     .donutWrap canvas {
-      width: 160px;
-      height: 160px;
+      width: 140px;
+      height: 140px;
+    }
+
+    .donutRow {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .donutLeft, .donutRight { width: 50%; }
+
+    .donutLeft {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .donutRight {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: #FFFFFF;
+      min-width: 0;
+    }
+
+    .donutLegendRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .donutLegendLeft {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .donutLegendName {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .donutLegendAmt {
+      color: var(--danger);
+      white-space: nowrap;
     }
 
     canvas {
@@ -828,8 +892,8 @@
           <div class="chartTop">
             <h2 class="sectionTitle">Monthly Overview</h2>
             <div class="chartLegend" aria-label="Chart legend">
-              <span class="legendItem"><span class="legendDot" style="background:#4FC3F7"></span>Income</span>
-              <span class="legendItem"><span class="legendDot" style="background:#ff6b6b"></span>Expenses</span>
+              <span class="legendItem"><span class="legendDot" style="background:#00E5A0"></span>Income</span>
+              <span class="legendItem"><span class="legendDot" style="background:#FF2D55"></span>Expenses</span>
             </div>
           </div>
           <canvas id="chartBars" height="160"></canvas>
@@ -841,8 +905,11 @@
           <div class="chartTop">
             <h2 class="sectionTitle">Expense Breakdown</h2>
           </div>
-          <div class="donutWrap">
-            <canvas id="chartDonut" width="160" height="160"></canvas>
+          <div class="donutRow">
+            <div class="donutLeft">
+              <canvas id="chartDonut" width="140" height="140"></canvas>
+            </div>
+            <div class="donutRight" id="donutLegend" aria-label="Expense breakdown legend"></div>
           </div>
         </div>
       </div>
@@ -1009,14 +1076,14 @@
 
       const CATEGORY_COLORS = {
         income: {
-          Salary: '#4FC3F7',
+          Salary: '#00E5A0',
           Freelance: '#7C83FD',
           Investment: '#FFD700',
           Gift: '#FF9ECD',
           Other: '#888888'
         },
         expense: {
-          Food: '#FF6B6B',
+          Food: '#FF2D55',
           Transport: '#FFA500',
           Housing: '#A78BFA',
           Subscriptions: '#34D399',
@@ -1778,10 +1845,10 @@
 
           const baseY = padT + chartH;
 
-          ctx.fillStyle = '#4FC3F7';
+          ctx.fillStyle = '#00E5A0';
           ctx.fillRect(xCenter - gap / 2 - barW, baseY - incH, barW, incH);
 
-          ctx.fillStyle = '#ff6b6b';
+          ctx.fillStyle = '#FF2D55';
           ctx.fillRect(xCenter + gap / 2, baseY - expH, barW, expH);
 
           const d = new Date(keys[i] + '-01T00:00:00');
@@ -1801,6 +1868,13 @@
         const { ctx, width, height } = dprScale(canvas);
         ctx.clearRect(0, 0, width, height);
 
+        const legendEl = $('donutLegend');
+        if (legendEl) legendEl.innerHTML = '';
+
+        const pad = 8;
+        const w = Math.max(1, width - pad * 2);
+        const h = Math.max(1, height - pad * 2);
+
         const mk = monthKey(nowISODate());
         const byCat = {};
         let total = 0;
@@ -1814,10 +1888,12 @@
         }
 
         const entries = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
-        const cx = width / 2;
-        const cy = height / 2;
-        const r = Math.min(width, height) * 0.42;
-        const thick = Math.max(12, r * 0.42);
+        const cx = pad + w / 2;
+        const cy = pad + h / 2;
+        const outerR = Math.min(w, h) / 2;
+        const innerR = outerR * 0.62;
+        const thick = Math.max(8, outerR - innerR);
+        const r = outerR - thick / 2;
 
         const startAt = -Math.PI / 2;
         let ang = startAt;
@@ -1853,7 +1929,7 @@
 
         ctx.fillStyle = 'rgba(0,0,0,0)';
         ctx.beginPath();
-        ctx.arc(cx, cy, Math.max(1, r - thick / 2), 0, Math.PI * 2);
+        ctx.arc(cx, cy, Math.max(1, innerR), 0, Math.PI * 2);
         ctx.fill();
 
         const selected = state.donutSelected && slices.find(s => s.cat === state.donutSelected.cat) ? state.donutSelected : null;
@@ -1877,6 +1953,38 @@
 
         canvas._slices = slices;
         canvas._total = total;
+
+        if (legendEl) {
+          const top = entries.slice(0, 5);
+          for (const [cat, amt] of top) {
+            const row = document.createElement('div');
+            row.className = 'donutLegendRow';
+
+            const left = document.createElement('div');
+            left.className = 'donutLegendLeft';
+
+            const dot = document.createElement('span');
+            dot.className = 'legendDot';
+            dot.style.width = '8px';
+            dot.style.height = '8px';
+            dot.style.background = catColor('expense', cat);
+
+            const name = document.createElement('span');
+            name.className = 'donutLegendName';
+            name.textContent = cat;
+
+            left.appendChild(dot);
+            left.appendChild(name);
+
+            const right = document.createElement('span');
+            right.className = 'donutLegendAmt mono';
+            right.textContent = fmtMoney(-amt);
+
+            row.appendChild(left);
+            row.appendChild(right);
+            legendEl.appendChild(row);
+          }
+        }
       }
 
       function renderTransactions(data) {
@@ -2669,19 +2777,20 @@
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            const cx = rect.width / 2;
-            const cy = rect.height / 2;
+            const pad = 8;
+            const cx = pad + (rect.width - pad * 2) / 2;
+            const cy = pad + (rect.height - pad * 2) / 2;
             const dx = x - cx;
             const dy = y - cy;
             const r = Math.sqrt(dx * dx + dy * dy);
 
-            const outerR = Math.min(rect.width, rect.height) * 0.42;
-            const thick = Math.max(12, outerR * 0.42);
-            const innerR = Math.max(0, outerR - thick / 2);
+            const outerR = Math.min(rect.width - pad * 2, rect.height - pad * 2) / 2;
+            const innerR = outerR * 0.62;
+            const thick = Math.max(8, outerR - innerR);
 
             const slices = donut._slices || [];
 
-            if (r < innerR || r > outerR + thick / 2) {
+            if (r < innerR || r > outerR) {
               state.donutSelected = null;
               render();
               return;
