@@ -870,9 +870,196 @@
     @media (max-width: 360px) {
       .row { grid-template-columns: 1fr; }
     }
+
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    #splash-screen.hide {
+      opacity: 0;
+    }
+
+    #splash-screen.exit {
+      opacity: 0;
+      transform: scale(1.08);
+    }
+
+    #splash-screen img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 16px;
+    }
+
+    #splash-screen .name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 2px;
+    }
+
+    #onboarding-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      z-index: 9998;
+      display: none;
+      flex-direction: column;
+      padding: 40px 24px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    #onboarding-screen.active { display: flex; }
+    #onboarding-screen.fadeOut { opacity: 0; transition: opacity 0.35s ease; }
+
+    .obTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .obBack {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      font-family: 'Outfit', system-ui, sans-serif;
+    }
+
+    .obStepText {
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    .obTitle {
+      margin-top: 22px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .obSubtitle {
+      margin-top: 6px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .obViewport {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin-top: 18px;
+    }
+
+    .obTrack {
+      display: flex;
+      width: 300%;
+      transition: transform 0.35s ease;
+      flex: 1;
+    }
+
+    .obStep {
+      width: 100%;
+      flex: 0 0 100%;
+      padding-right: 10px;
+      box-sizing: border-box;
+    }
+
+    .obOption {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      font-family: 'Outfit', system-ui, sans-serif;
+      transition: all 0.2s ease;
+    }
+
+    .obOption.selected {
+      border-color: #00C27A;
+      background: rgba(0,194,122,0.12);
+    }
+
+    .obBottom {
+      padding-top: 14px;
+    }
+
+    .obContinue {
+      background: #00C27A;
+      color: #ffffff;
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: 'Outfit', system-ui, sans-serif;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .obContinue:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .obContinue:active { transform: scale(0.98); }
+
+    .profileRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .profileLabel { color: rgba(255,255,255,0.5); font-size: 13px; }
+    .profileValue { color: #ffffff; font-size: 13px; font-weight: 600; }
+
+    body.booting #app,
+    body.booting .nav {
+      opacity: 0;
+      pointer-events: none;
+    }
   </style>
 </head>
-<body>
+<body class="booting">
   <div class="app" id="app">
     <div class="topbar">
       <div class="title" id="topTitle">Home</div>
@@ -1071,6 +1258,27 @@
     </section>
 
     <section class="page" id="page-accounts">
+      <div class="card" id="profileCard">
+        <div class="inlineRow">
+          <h2>MY PROFILE</h2>
+          <button class="btn inline" id="profileEditBtn" type="button">✏️ Edit</button>
+        </div>
+        <div style="margin-top: 8px;">
+          <div class="profileRow">
+            <span class="profileLabel">Status</span>
+            <span class="profileValue" id="profileStatus">—</span>
+          </div>
+          <div class="profileRow">
+            <span class="profileLabel">Monthly Income</span>
+            <span class="profileValue" id="profileIncome">—</span>
+          </div>
+          <div class="profileRow" style="border-bottom: none; padding-bottom: 0;">
+            <span class="profileLabel">Income Source</span>
+            <span class="profileValue" id="profileSource">—</span>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="inlineRow">
           <h2>Accounts</h2>
@@ -1126,9 +1334,58 @@
     </div>
   </div>
 
+  <div id="splash-screen">
+    <img src="logo.png" alt="ZenBudget" />
+    <div class="name">ZenBudget</div>
+  </div>
+
+  <div id="onboarding-screen" aria-label="Onboarding">
+    <div class="obTop">
+      <button class="obBack" id="obBack" type="button" style="visibility:hidden">←</button>
+      <div class="obStepText" id="obStepText">1/3</div>
+      <div style="width: 38px;"></div>
+    </div>
+
+    <div class="obTitle" id="obTitle">What's your status?</div>
+    <div class="obSubtitle" id="obSubtitle">Help us personalize your experience</div>
+
+    <div class="obViewport">
+      <div class="obTrack" id="obTrack">
+        <div class="obStep" data-step="1">
+          <button class="obOption" type="button" data-value="Working">💼 Working</button>
+          <button class="obOption" type="button" data-value="Studying">📚 Studying</button>
+          <button class="obOption" type="button" data-value="Unemployed">🔍 Unemployed</button>
+          <button class="obOption" type="button" data-value="Other">🏠 Other</button>
+        </div>
+
+        <div class="obStep" data-step="2">
+          <button class="obOption" type="button" data-value="€0–500">€0–500</button>
+          <button class="obOption" type="button" data-value="€500–1500">€500–1500</button>
+          <button class="obOption" type="button" data-value="€1500–5000">€1500–5000</button>
+          <button class="obOption" type="button" data-value="€5000+">€5000+</button>
+        </div>
+
+        <div class="obStep" data-step="3">
+          <button class="obOption" type="button" data-value="Salary">💰 Salary</button>
+          <button class="obOption" type="button" data-value="Benefits">📋 Benefits</button>
+          <button class="obOption" type="button" data-value="Family">👨‍👩‍👧 Family</button>
+          <button class="obOption" type="button" data-value="Other">✨ Other</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="obBottom">
+      <button class="obContinue" id="obContinue" type="button" disabled>Continue →</button>
+    </div>
+  </div>
+
   <script>
     (function () {
       const STORAGE_KEY = 'finance_miniapp_v1';
+      const ZB_ONBOARDING_DONE_KEY = 'zb_onboarding_done';
+      const ZB_PROFILE_STATUS_KEY = 'zb_profile_status';
+      const ZB_PROFILE_INCOME_KEY = 'zb_profile_income';
+      const ZB_PROFILE_SOURCE_KEY = 'zb_profile_source';
 
       const DEFAULT_CATEGORIES = {
         income: ['Salary', 'Freelance', 'Investment', 'Gift', 'Other'],
@@ -2279,6 +2536,13 @@
       }
 
       function renderAccounts(data) {
+        const st = localStorage.getItem(ZB_PROFILE_STATUS_KEY) || '—';
+        const inc = localStorage.getItem(ZB_PROFILE_INCOME_KEY) || '—';
+        const src = localStorage.getItem(ZB_PROFILE_SOURCE_KEY) || '—';
+        if ($('profileStatus')) $('profileStatus').textContent = st;
+        if ($('profileIncome')) $('profileIncome').textContent = inc;
+        if ($('profileSource')) $('profileSource').textContent = src;
+
         const container = $('acctList');
         container.innerHTML = '';
 
@@ -2755,6 +3019,12 @@
         if ($('qaAccounts')) $('qaAccounts').addEventListener('click', () => setTab('accounts'));
         if ($('qaRecurring')) $('qaRecurring').addEventListener('click', () => setTab('recurring'));
 
+        if ($('profileEditBtn')) {
+          $('profileEditBtn').addEventListener('click', () => {
+            openOnboarding(true);
+          });
+        }
+
         $('exportBtn').addEventListener('click', async () => {
           const d = ensureData();
           const json = JSON.stringify(d, null, 2);
@@ -3015,7 +3285,141 @@
         render();
       }
 
-      init();
+      function openOnboarding(fromEdit) {
+        const ob = $('onboarding-screen');
+        if (!ob) return;
+
+        const track = $('obTrack');
+        const back = $('obBack');
+        const stepText = $('obStepText');
+        const title = $('obTitle');
+        const subtitle = $('obSubtitle');
+        const cont = $('obContinue');
+
+        const steps = [
+          { title: "What's your status?", subtitle: 'Help us personalize your experience', key: ZB_PROFILE_STATUS_KEY },
+          { title: 'Monthly income?', subtitle: '', key: ZB_PROFILE_INCOME_KEY },
+          { title: 'Main income source?', subtitle: '', key: ZB_PROFILE_SOURCE_KEY }
+        ];
+
+        const sel = {
+          status: localStorage.getItem(ZB_PROFILE_STATUS_KEY) || '',
+          income: localStorage.getItem(ZB_PROFILE_INCOME_KEY) || '',
+          source: localStorage.getItem(ZB_PROFILE_SOURCE_KEY) || ''
+        };
+
+        let idx = 0;
+
+        const stepValue = (i) => {
+          if (i === 0) return sel.status;
+          if (i === 1) return sel.income;
+          return sel.source;
+        };
+
+        const setStepValue = (i, v) => {
+          if (i === 0) sel.status = v;
+          else if (i === 1) sel.income = v;
+          else sel.source = v;
+        };
+
+        const syncSelectedUI = () => {
+          const stepEl = track.querySelector(`.obStep[data-step="${idx + 1}"]`);
+          const v = stepValue(idx);
+          for (const b of stepEl.querySelectorAll('.obOption')) {
+            b.classList.toggle('selected', (b.dataset.value || '') === v);
+          }
+        };
+
+        const update = () => {
+          track.style.transform = `translateX(-${idx * 100}%)`;
+          stepText.textContent = `${idx + 1}/3`;
+          title.textContent = steps[idx].title;
+          subtitle.textContent = steps[idx].subtitle;
+          subtitle.style.display = steps[idx].subtitle ? 'block' : 'none';
+          back.style.visibility = idx === 0 ? 'hidden' : 'visible';
+          cont.textContent = idx === 2 ? 'Finish' : 'Continue →';
+          cont.disabled = !stepValue(idx);
+          syncSelectedUI();
+        };
+
+        for (const stepEl of track.querySelectorAll('.obStep')) {
+          for (const b of stepEl.querySelectorAll('.obOption')) {
+            b.onclick = () => {
+              const v = b.dataset.value || '';
+              setStepValue(idx, v);
+              update();
+            };
+          }
+        }
+
+        back.onclick = () => {
+          if (idx === 0) return;
+          idx -= 1;
+          update();
+        };
+
+        cont.onclick = () => {
+          if (!stepValue(idx)) return;
+          if (idx < 2) {
+            idx += 1;
+            update();
+            return;
+          }
+
+          localStorage.setItem(ZB_ONBOARDING_DONE_KEY, 'true');
+          localStorage.setItem(ZB_PROFILE_STATUS_KEY, sel.status);
+          localStorage.setItem(ZB_PROFILE_INCOME_KEY, sel.income);
+          localStorage.setItem(ZB_PROFILE_SOURCE_KEY, sel.source);
+
+          ob.classList.add('fadeOut');
+          setTimeout(() => {
+            ob.classList.remove('active');
+            ob.classList.remove('fadeOut');
+            document.body.classList.remove('booting');
+            if (fromEdit) render();
+          }, 350);
+        };
+
+        ob.classList.add('active');
+        ob.classList.remove('fadeOut');
+        update();
+      }
+
+      function boot() {
+        const splash = $('splash-screen');
+        const returning = localStorage.getItem(ZB_ONBOARDING_DONE_KEY) === 'true';
+        setTimeout(() => {
+          if (!splash) {
+            if (!returning) {
+              openOnboarding(false);
+              init();
+              return;
+            }
+            document.body.classList.remove('booting');
+            init();
+            return;
+          }
+
+          if (!returning) {
+            splash.classList.add('hide');
+            setTimeout(() => {
+              splash.remove();
+              init();
+              openOnboarding(false);
+            }, 600);
+            return;
+          }
+
+          splash.classList.add('exit');
+          setTimeout(() => {
+            splash.remove();
+            document.body.classList.remove('booting');
+            init();
+          }, 600);
+        }, 1800);
+      }
+
+      boot();
     })();
   </script>
 </body>
