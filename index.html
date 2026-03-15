@@ -964,132 +964,84 @@
 
     #onboarding-screen {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000000;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: stretch;
+      justify-content: space-between;
       padding: 20px;
-      padding-right: 20px !important;
       box-sizing: border-box;
-      box-sizing: border-box !important;
-      width: 100%;
-      width: 100% !important;
-      max-width: 100vw;
-      overflow-x: hidden;
-      overflow-x: hidden !important;
-      height: 100vh;
-      max-height: 100vh;
-      overflow: hidden;
-      background: #000000;
       z-index: 9998;
     }
-
-    #onboarding-screen { display: none !important; }
-    #onboarding-screen.active { display: flex !important; }
-    #onboarding-screen.fadeOut { opacity: 0; transition: opacity 0.35s ease; }
-
-    .obTop {
+    .ob-top {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 12px;
-      flex-shrink: 0;
-      margin-bottom: 12px !important;
-      margin-top: 8px !important;
-      position: relative;
+      justify-content: space-between;
+      margin-bottom: 8px;
     }
-
-    .obMain {
-      flex: 0 0 auto !important;
-      flex-grow: 0 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: flex-start !important;
-      min-height: 0 !important;
-    }
-
-    .obBack {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      color: #ffffff;
-      font-weight: 700;
+    .ob-back {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 18px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      font-family: 'Outfit', system-ui, sans-serif;
-      flex: 0 0 auto;
     }
-
-    .obStepText {
-      color: rgba(255,255,255,0.5);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      margin-left: auto !important;
-      margin-right: auto !important;
+    .ob-step {
+      color: rgba(255,255,255,0.4);
+      font-size: 14px;
     }
-
-    .obTitle {
-      font-size: 24px !important;
-      margin-bottom: 4px !important;
-      margin-top: 0 !important;
-      font-weight: 700;
-      color: #ffffff;
-      line-height: 1.2;
-    }
-
-    .obSubtitle {
-      margin-top: 0;
-      font-size: 13px !important;
-      margin-bottom: 16px !important;
-      color: rgba(255,255,255,0.5);
-      line-height: 1.25;
-    }
-
-    .obViewport {
-      position: relative;
-      flex: 0 0 auto !important;
-      display: flex !important;
-      flex-direction: column !important;
-      overflow: hidden;
-      margin-top: 0;
-      justify-content: flex-start !important;
-      max-height: none !important;
-      min-height: 0 !important;
-    }
-
-    .obTrack {
+    .ob-middle {
+      flex: 1;
       display: flex;
-      width: 300%;
-      transition: transform 0.35s ease;
-      flex: 0 0 auto !important;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      will-change: opacity, transform;
     }
-
-    .obStep {
+    .ob-middle.ob-anim-out-left {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+    .ob-middle.ob-anim-out-right {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+    .ob-middle.ob-anim-in-left {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+    .ob-middle.ob-anim-in-right {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+    .ob-title {
+      color: #ffffff;
+      font-size: 26px;
+      font-weight: 700;
+      margin: 0 0 6px 0;
+    }
+    .ob-sub {
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
+      margin: 0 0 20px 0;
+    }
+    .ob-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       width: 100%;
-      max-width: 100%;
-      flex: 0 0 100%;
-      padding-left: 20px;
-      padding-right: 20px;
       box-sizing: border-box;
-      overflow: hidden;
     }
-
-    .ob-option {
-      display: block;
+    .ob-btn {
       width: 100%;
-      max-width: 100%;
       padding: 14px 16px;
-      margin-bottom: 10px;
-      margin-right: 0;
-      background: rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 14px;
       color: #ffffff;
@@ -1097,52 +1049,40 @@
       font-weight: 500;
       text-align: left;
       box-sizing: border-box;
-      box-sizing: border-box !important;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
     }
-
-    .ob-option.selected {
+    .ob-btn.selected {
       background: rgba(0,194,122,0.12);
       border-color: #00C27A;
     }
-
-    #onboarding-screen .obStep {
+    .ob-btn:active {
+      transform: scale(0.985);
+    }
+    .ob-continue {
       width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      padding-left: 20px;
-      padding-right: 20px;
-      margin: 0;
-      overflow: hidden;
-    }
-
-    .obBottom {
-      flex-shrink: 0;
-    }
-
-    .obContinue {
-      margin-top: 16px !important;
-      flex-shrink: 0 !important;
-      width: 100% !important;
-      padding: 15px !important;
-      height: 54px !important;
-      border-radius: 14px !important;
-      background: #00C27A !important;
-      color: white !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
-      border: none !important;
+      padding: 16px;
+      background: #00C27A;
+      border: none;
+      border-radius: 14px;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      font-family: 'Outfit', system-ui, sans-serif;
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      margin-top: 20px;
+      box-sizing: border-box;
+      opacity: 0.35;
+      transition: opacity 0.2s ease, transform 0.18s ease;
     }
-
-    .obContinue:disabled {
-      opacity: 0.3;
-      cursor: default;
+    .ob-continue:not(:disabled) {
+      opacity: 1;
     }
-
-    .obContinue:active { transform: scale(0.98); }
+    .ob-continue:active:not(:disabled) {
+      transform: scale(0.985);
+    }
 
     .profileRow {
       display: flex;
@@ -1448,45 +1388,18 @@
     <div class="name app-name">ZenBudget</div>
   </div>
 
-  <div id="onboarding-screen" aria-label="Onboarding">
-    <div class="obTop">
-      <button class="obBack" id="obBack" type="button" style="visibility:hidden">в†ђ</button>
-      <div class="obStepText" id="obStepText">1/3</div>
+  <div id="onboarding-screen">
+    <div class="ob-top">
+      <button class="ob-back" id="ob-back-btn" onclick="obBack()" style="visibility:hidden">←</button>
+      <span class="ob-step" id="ob-step-label">1/3</span>
+      <div style="width:40px"></div>
     </div>
-
-    <div class="obMain">
-      <div class="obTitle" id="obTitle">What's your status?</div>
-      <div class="obSubtitle" id="obSubtitle">Help us personalize your experience</div>
-
-      <div class="obViewport">
-        <div class="obTrack" id="obTrack">
-          <div class="obStep" data-step="1">
-            <button class="ob-option" onclick="selectOption(this, 'Working')">рџ’ј Working</button>
-            <button class="ob-option" onclick="selectOption(this, 'Studying')">рџ“љ Studying</button>
-            <button class="ob-option" onclick="selectOption(this, 'Unemployed')">рџ”Ќ Unemployed</button>
-            <button class="ob-option" onclick="selectOption(this, 'Other')">рџЏ  Other</button>
-          </div>
-
-          <div class="obStep" data-step="2">
-            <button class="ob-option" onclick="selectOption(this, 'в‚¬0вЂ“500')">в‚¬0вЂ“500</button>
-            <button class="ob-option" onclick="selectOption(this, 'в‚¬500вЂ“1500')">в‚¬500вЂ“1500</button>
-            <button class="ob-option" onclick="selectOption(this, 'в‚¬1500вЂ“5000')">в‚¬1500вЂ“5000</button>
-            <button class="ob-option" onclick="selectOption(this, 'в‚¬5000+')">в‚¬5000+</button>
-          </div>
-
-          <div class="obStep" data-step="3">
-            <button class="ob-option" onclick="selectOption(this, 'Salary')">рџ’° Salary</button>
-            <button class="ob-option" onclick="selectOption(this, 'Benefits')">рџ“‹ Benefits</button>
-            <button class="ob-option" onclick="selectOption(this, 'Family')">рџ‘ЁвЂЌрџ‘©вЂЌрџ‘§ Family</button>
-            <button class="ob-option" onclick="selectOption(this, 'Other')">вњЁ Other</button>
-          </div>
-        </div>
-      </div>
+    <div class="ob-middle">
+      <h2 class="ob-title" id="ob-title">What's your status?</h2>
+      <p class="ob-sub" id="ob-sub">Help us personalize your experience</p>
+      <div class="ob-options" id="ob-options"></div>
     </div>
-
-    <div class="obBottom">
-      <button class="obContinue" id="obContinue" type="button" disabled>Continue в†’</button>
-    </div>
+    <button class="ob-continue" id="ob-continue-btn" onclick="obNext()" disabled>Continue →</button>
   </div>
 
   <script>
@@ -3129,7 +3042,16 @@
 
         if ($('profileEditBtn')) {
           $('profileEditBtn').addEventListener('click', () => {
-            openOnboarding(true);
+            const screen = document.getElementById('onboarding-screen');
+            if (!screen) return;
+            obAnswers = {};
+            obSteps.forEach((step) => {
+              obAnswers[step.key] = localStorage.getItem(step.key) || '';
+            });
+            obCurrentStep = 0;
+            screen.style.display = 'flex';
+            document.body.classList.add('booting');
+            obRender();
           });
         }
 
@@ -3393,144 +3315,147 @@
         render();
       }
 
-      function openOnboarding(fromEdit) {
-        const ob = $('onboarding-screen');
-        if (!ob) return;
+      const obSteps = [
+        {
+          title: "What's your status?",
+          sub: "Help us personalize your experience",
+          key: "zb_profile_status",
+          options: [
+            { emoji: "💼", label: "Working" },
+            { emoji: "📚", label: "Studying" },
+            { emoji: "🔍", label: "Unemployed" },
+            { emoji: "🏠", label: "Other" }
+          ]
+        },
+        {
+          title: "Monthly income?",
+          sub: "Pick the range that fits you best",
+          key: "zb_profile_income",
+          options: [
+            { emoji: "💵", label: "€0 – 500" },
+            { emoji: "💶", label: "€500 – 1500" },
+            { emoji: "💰", label: "€1500 – 5000" },
+            { emoji: "🏦", label: "€5000+" }
+          ]
+        },
+        {
+          title: "Main income source?",
+          sub: "Where does most of your money come from?",
+          key: "zb_profile_source",
+          options: [
+            { emoji: "💰", label: "Salary" },
+            { emoji: "📋", label: "Benefits" },
+            { emoji: "👨‍👩‍👧", label: "Family" },
+            { emoji: "✨", label: "Other" }
+          ]
+        }
+      ];
 
-        const track = $('obTrack');
-        const back = $('obBack');
-        const stepText = $('obStepText');
-        const title = $('obTitle');
-        const subtitle = $('obSubtitle');
-        const cont = $('obContinue');
+      let obCurrentStep = 0;
+      let obAnswers = {};
+      let obAnimating = false;
 
-        const steps = [
-          { title: "What's your status?", subtitle: 'Help us personalize your experience', key: ZB_PROFILE_STATUS_KEY },
-          { title: 'Monthly income?', subtitle: '', key: ZB_PROFILE_INCOME_KEY },
-          { title: 'Main income source?', subtitle: '', key: ZB_PROFILE_SOURCE_KEY }
-        ];
+      function obRender() {
+        const step = obSteps[obCurrentStep];
+        document.getElementById('ob-title').textContent = step.title;
+        document.getElementById('ob-sub').textContent = step.sub;
+        document.getElementById('ob-step-label').textContent = (obCurrentStep + 1) + '/3';
+        document.getElementById('ob-back-btn').style.visibility = obCurrentStep === 0 ? 'hidden' : 'visible';
+        document.getElementById('ob-continue-btn').textContent = obCurrentStep === 2 ? 'Finish ✓' : 'Continue →';
+        document.getElementById('ob-continue-btn').disabled = true;
 
-        const sel = {
-          status: localStorage.getItem(ZB_PROFILE_STATUS_KEY) || '',
-          income: localStorage.getItem(ZB_PROFILE_INCOME_KEY) || '',
-          source: localStorage.getItem(ZB_PROFILE_SOURCE_KEY) || ''
-        };
+        const container = document.getElementById('ob-options');
+        container.innerHTML = '';
+        step.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'ob-btn';
+          btn.innerHTML = '<span>' + opt.emoji + '</span><span>' + opt.label + '</span>';
+          if (obAnswers[step.key] === opt.label) {
+            btn.classList.add('selected');
+            document.getElementById('ob-continue-btn').disabled = false;
+          }
+          btn.onclick = () => {
+            container.querySelectorAll('.ob-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            obAnswers[step.key] = opt.label;
+            document.getElementById('ob-continue-btn').disabled = false;
+          };
+          container.appendChild(btn);
+        });
+      }
 
-        let idx = 0;
-
-        const optionValueByEl = new WeakMap();
-        for (const btn of track.querySelectorAll('.ob-option')) {
-          const raw = btn.getAttribute('onclick') || '';
-          const m = raw.match(/selectOption\(this,\s*'([^']*)'\s*\)/);
-          if (m && m[1] != null) optionValueByEl.set(btn, m[1]);
+      function obAnimateStep(direction, updateStep) {
+        if (obAnimating) return;
+        const middle = document.querySelector('.ob-middle');
+        if (!middle) {
+          updateStep();
+          obRender();
+          return;
         }
 
-        const stepValue = (i) => {
-          if (i === 0) return sel.status;
-          if (i === 1) return sel.income;
-          return sel.source;
-        };
+        obAnimating = true;
+        const outClass = direction === 'next' ? 'ob-anim-out-left' : 'ob-anim-out-right';
+        const inClass = direction === 'next' ? 'ob-anim-in-left' : 'ob-anim-in-right';
 
-        const setStepValue = (i, v) => {
-          if (i === 0) sel.status = v;
-          else if (i === 1) sel.income = v;
-          else sel.source = v;
-        };
+        middle.classList.remove('ob-anim-out-left', 'ob-anim-out-right', 'ob-anim-in-left', 'ob-anim-in-right');
+        middle.classList.add(outClass);
 
-        const syncSelectedUI = () => {
-          const stepEl = track.querySelector(`.obStep[data-step="${idx + 1}"]`);
-          const v = stepValue(idx);
-          for (const b of stepEl.querySelectorAll('.ob-option')) {
-            b.classList.toggle('selected', (optionValueByEl.get(b) || '') === v);
-          }
-        };
-
-        const update = () => {
-          track.style.transform = `translateX(-${idx * 100}%)`;
-          stepText.textContent = `${idx + 1}/3`;
-          title.textContent = steps[idx].title;
-          subtitle.textContent = steps[idx].subtitle;
-          subtitle.style.display = steps[idx].subtitle ? 'block' : 'none';
-          back.style.visibility = idx === 0 ? 'hidden' : 'visible';
-          cont.textContent = idx === 2 ? 'Finish' : 'Continue в†’';
-          cont.disabled = !stepValue(idx);
-          syncSelectedUI();
-        };
-
-        window.selectOption = (el, value) => {
-          void el;
-          setStepValue(idx, value);
-          update();
-        };
-
-        back.onclick = () => {
-          if (idx === 0) return;
-          idx -= 1;
-          update();
-        };
-
-        cont.onclick = () => {
-          if (!stepValue(idx)) return;
-          if (idx < 2) {
-            idx += 1;
-            update();
-            return;
-          }
-
-          localStorage.setItem(ZB_ONBOARDING_DONE_KEY, 'true');
-          localStorage.setItem(ZB_PROFILE_STATUS_KEY, sel.status);
-          localStorage.setItem(ZB_PROFILE_INCOME_KEY, sel.income);
-          localStorage.setItem(ZB_PROFILE_SOURCE_KEY, sel.source);
-
-          ob.classList.add('fadeOut');
-          setTimeout(() => {
-            ob.classList.remove('active');
-            ob.classList.remove('fadeOut');
-            document.body.classList.remove('booting');
-            if (fromEdit) render();
-          }, 350);
-        };
-
-        ob.classList.add('active');
-        ob.classList.remove('fadeOut');
-        update();
-      }
-
-      function boot() {
-        const splash = $('splash-screen');
-        const returning = localStorage.getItem(ZB_ONBOARDING_DONE_KEY) === 'true';
         setTimeout(() => {
-          if (!splash) {
-            if (!returning) {
-              openOnboarding(false);
-              init();
-              return;
-            }
-            document.body.classList.remove('booting');
-            init();
-            return;
-          }
+          updateStep();
+          middle.classList.remove(outClass);
+          middle.classList.add(inClass);
+          obRender();
 
-          if (!returning) {
-            splash.classList.add('hide');
-            setTimeout(() => {
-              splash.remove();
-              init();
-              openOnboarding(false);
-            }, 600);
-            return;
-          }
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              middle.classList.remove(inClass);
+            });
+          });
 
-          splash.classList.add('exit');
           setTimeout(() => {
-            splash.remove();
-            document.body.classList.remove('booting');
-            init();
-          }, 600);
-        }, 1800);
+            obAnimating = false;
+          }, 300);
+        }, 180);
       }
 
-      boot();
+      function obNext() {
+        if (obAnimating) return;
+        if (obCurrentStep < 2) {
+          obAnimateStep('next', () => {
+            obCurrentStep++;
+          });
+        } else {
+          obSteps.forEach(s => localStorage.setItem(s.key, obAnswers[s.key] || ''));
+          localStorage.setItem('zb_onboarding_done', 'true');
+          document.getElementById('onboarding-screen').style.display = 'none';
+          document.body.classList.remove('booting');
+          render();
+        }
+      }
+
+      function obBack() {
+        if (obAnimating) return;
+        if (obCurrentStep > 0) {
+          obAnimateStep('back', () => {
+            obCurrentStep--;
+          });
+        }
+      }
+
+      window.obNext = obNext;
+      window.obBack = obBack;
+
+      const splash = $('splash-screen');
+      if (splash) splash.remove();
+
+      init();
+
+      if (!localStorage.getItem('zb_onboarding_done')) {
+        obRender();
+      } else {
+        document.getElementById('onboarding-screen').style.display = 'none';
+        document.body.classList.remove('booting');
+      }
     })();
   </script>
 </body>
