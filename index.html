@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1139,10 +1139,10 @@
           <h2 class="sectionTitle">Vs last month</h2>
         </div>
         <div class="sub" style="margin-top: 10px;">
-          <span class="muted" id="vsIncome">вЂ”</span>
-          <span class="muted" id="vsExpenses">вЂ”</span>
+          <span class="muted" id="vsIncome">-</span>
+          <span class="muted" id="vsExpenses">-</span>
         </div>
-        <div class="hint" id="vsLabel" style="margin-top: 10px;">вЂ”</div>
+        <div class="hint" id="vsLabel" style="margin-top: 10px;">-</div>
       </div>
 
       <div class="row monthRow" style="margin-top: 14px;">
@@ -1176,8 +1176,8 @@
           <div class="barFill" id="budgetBar"></div>
         </div>
         <div class="sub" style="margin-top: 12px;">
-          <span class="muted" id="budgetText">вЂ”</span>
-          <span class="muted" id="budgetPercent">вЂ”</span>
+          <span class="muted" id="budgetText">-</span>
+          <span class="muted" id="budgetPercent">-</span>
         </div>
         <button class="btn primary" id="budgetSetBtn" type="button" style="margin-top: 12px;">Set monthly budget</button>
       </div>
@@ -1264,7 +1264,7 @@
           <button class="btn" id="txClear" type="button">Clear</button>
         </div>
 
-        <div class="hint" id="txHint">Tip: swipe isnвЂ™t neededвЂ”tap Save. You can delete from the list below.</div>
+        <div class="hint" id="txHint">Tip: tap Save to add. Delete from list below.</div>
       </div>
 
       <div class="card" style="margin-top: 12px;">
@@ -1319,20 +1319,20 @@
       <div class="card" id="profileCard">
         <div class="inlineRow">
           <h2>MY PROFILE</h2>
-          <button class="btn inline" id="profileEditBtn" type="button">вњЏпёЏ Edit</button>
+          <button class="btn inline" id="profileEditBtn" type="button">Edit</button>
         </div>
         <div style="margin-top: 8px;">
           <div class="profileRow">
             <span class="profileLabel">Status</span>
-            <span class="profileValue" id="profileStatus">вЂ”</span>
+            <span class="profileValue" id="profileStatus">-</span>
           </div>
           <div class="profileRow">
             <span class="profileLabel">Monthly Income</span>
-            <span class="profileValue" id="profileIncome">вЂ”</span>
+            <span class="profileValue" id="profileIncome">-</span>
           </div>
           <div class="profileRow" style="border-bottom: none; padding-bottom: 0;">
             <span class="profileLabel">Income Source</span>
-            <span class="profileValue" id="profileSource">вЂ”</span>
+            <span class="profileValue" id="profileSource">-</span>
           </div>
         </div>
       </div>
@@ -1364,20 +1364,16 @@
   <nav class="nav" aria-label="Bottom navigation">
     <div class="inner">
       <button class="tab active" id="tab-home" type="button" data-tab="home">
-        <span class="icon" aria-hidden="true">вЊ‚</span>
-        <span>Home</span>
+        <span>HOME</span>
       </button>
       <button class="tab" id="tab-transactions" type="button" data-tab="transactions">
-        <span class="icon" aria-hidden="true">в‡„</span>
-        <span>Transactions</span>
+        <span>TRANSACTIONS</span>
       </button>
       <button class="tab" id="tab-recurring" type="button" data-tab="recurring">
-        <span class="icon" aria-hidden="true">в†»</span>
-        <span>Recurring</span>
+        <span>RECURRING</span>
       </button>
       <button class="tab" id="tab-accounts" type="button" data-tab="accounts">
-        <span class="icon" aria-hidden="true">в—Ћ</span>
-        <span>Accounts</span>
+        <span>ACCOUNTS</span>
       </button>
     </div>
   </nav>
@@ -1577,9 +1573,9 @@
       function currencySymbol() {
         const c = state.currency || 'USD';
         if (c === 'USD') return '$';
-        if (c === 'EUR') return 'в‚¬';
-        if (c === 'GBP') return 'ВЈ';
-        if (c === 'RUB') return 'в‚Ѕ';
+        if (c === 'EUR') return 'EUR ';
+        if (c === 'GBP') return 'GBP ';
+        if (c === 'RUB') return 'RUB ';
         return '';
       }
 
@@ -1764,11 +1760,11 @@
         const incPct = msPrev.income > 0 ? ((ms.income - msPrev.income) / msPrev.income) * 100 : null;
         const expPct = msPrev.expenses > 0 ? ((ms.expenses - msPrev.expenses) / msPrev.expenses) * 100 : null;
 
-        const incArrow = incPct === null ? 'вЂ”' : (incPct >= 0 ? 'в†‘' : 'в†“');
-        const expArrow = expPct === null ? 'вЂ”' : (expPct >= 0 ? 'в†‘' : 'в†“');
+        const incArrow = incPct === null ? '-' : (incPct >= 0 ? '+' : '-');
+        const expArrow = expPct === null ? '-' : (expPct >= 0 ? '+' : '-');
 
-        const incText = incPct === null ? 'вЂ”' : `${incArrow} ${Math.abs(incPct).toFixed(0)}% income`;
-        const expText = expPct === null ? 'вЂ”' : `${expArrow} ${Math.abs(expPct).toFixed(0)}% expenses`;
+        const incText = incPct === null ? '-' : `${incArrow} ${Math.abs(incPct).toFixed(0)}% income`;
+        const expText = expPct === null ? '-' : `${expArrow} ${Math.abs(expPct).toFixed(0)}% expenses`;
 
         $('vsIncome').textContent = incText;
         $('vsExpenses').textContent = expText;
@@ -1798,8 +1794,8 @@
         else if (pct >= 0.7) col = '#FFA500';
         fill.style.background = col;
 
-        $('budgetText').textContent = has ? `${fmtMoney(spent)} spent of ${fmtMoney(budget)} budget` : 'вЂ”';
-        $('budgetPercent').textContent = has ? `${Math.round(pct * 100)}%` : 'вЂ”';
+        $('budgetText').textContent = has ? `${fmtMoney(spent)} spent of ${fmtMoney(budget)} budget` : '-';
+        $('budgetPercent').textContent = has ? `${Math.round(pct * 100)}%` : '-';
       }
 
       function renderGoals(data) {
@@ -2415,7 +2411,7 @@
           desc.className = 'desc';
           const acctName = acct ? acct.name : 'Unknown account';
           const note = (tx.note || '').trim();
-          desc.textContent = `${tx.date || ''} вЂў ${acctName}${note ? ' вЂў ' + note : ''}`;
+          desc.textContent = `${tx.date || ''} | ${acctName}${note ? ' | ' + note : ''}`;
 
           meta.appendChild(nameRow);
           meta.appendChild(desc);
@@ -2494,7 +2490,7 @@
           const acctName = acct ? acct.name : 'Unknown account';
           const paid = recurringIsPaidForThisMonth(rec);
           const paidText = paid ? `Paid (${rec.lastPaidMonth})` : 'Not paid yet';
-          desc.textContent = `${acctName} вЂў Next: ${rec.nextDate || ''} вЂў ${paidText}`;
+          desc.textContent = `${acctName} | Next: ${rec.nextDate || ''} | ${paidText}`;
 
           meta.appendChild(name);
           meta.appendChild(desc);
@@ -2566,9 +2562,9 @@
       }
 
       function renderAccounts(data) {
-        const st = localStorage.getItem(ZB_PROFILE_STATUS_KEY) || 'вЂ”';
-        const inc = localStorage.getItem(ZB_PROFILE_INCOME_KEY) || 'вЂ”';
-        const src = localStorage.getItem(ZB_PROFILE_SOURCE_KEY) || 'вЂ”';
+        const st = localStorage.getItem(ZB_PROFILE_STATUS_KEY) || '-';
+        const inc = localStorage.getItem(ZB_PROFILE_INCOME_KEY) || '-';
+        const src = localStorage.getItem(ZB_PROFILE_SOURCE_KEY) || '-';
         if ($('profileStatus')) $('profileStatus').textContent = st;
         if ($('profileIncome')) $('profileIncome').textContent = inc;
         if ($('profileSource')) $('profileSource').textContent = src;
@@ -2695,7 +2691,7 @@
 
               const dsc = document.createElement('div');
               dsc.className = 'desc';
-              dsc.textContent = `${tx.date || ''}${tx.note ? ' вЂў ' + tx.note : ''}`;
+              dsc.textContent = `${tx.date || ''}${tx.note ? ' | ' + tx.note : ''}`;
 
               m.appendChild(n);
               m.appendChild(dsc);
