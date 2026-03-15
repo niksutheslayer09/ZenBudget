@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -976,7 +976,8 @@
       box-sizing: border-box !important;
       width: 100%;
       width: 100% !important;
-      max-width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
       overflow-x: hidden !important;
       height: 100vh;
       max-height: 100vh;
@@ -1073,19 +1074,21 @@
 
     .obStep {
       width: 100%;
+      max-width: 100%;
       flex: 0 0 100%;
-      padding-right: 0;
+      padding-left: 20px;
+      padding-right: 20px;
       box-sizing: border-box;
+      overflow: hidden;
     }
 
     .ob-option {
       display: block;
-      width: calc(100vw - 40px);
-      max-width: calc(100vw - 40px);
-      max-width: 100% !important;
+      width: 100%;
+      max-width: 100%;
       padding: 14px 16px;
       margin-bottom: 10px;
-      margin-right: 20px;
+      margin-right: 0;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 14px;
@@ -1105,6 +1108,7 @@
 
     #onboarding-screen .obStep {
       width: 100%;
+      max-width: 100%;
       box-sizing: border-box;
       padding-left: 20px;
       padding-right: 20px;
@@ -1186,10 +1190,10 @@
           <h2 class="sectionTitle">Vs last month</h2>
         </div>
         <div class="sub" style="margin-top: 10px;">
-          <span class="muted" id="vsIncome">—</span>
-          <span class="muted" id="vsExpenses">—</span>
+          <span class="muted" id="vsIncome">вЂ”</span>
+          <span class="muted" id="vsExpenses">вЂ”</span>
         </div>
-        <div class="hint" id="vsLabel" style="margin-top: 10px;">—</div>
+        <div class="hint" id="vsLabel" style="margin-top: 10px;">вЂ”</div>
       </div>
 
       <div class="row monthRow" style="margin-top: 14px;">
@@ -1223,8 +1227,8 @@
           <div class="barFill" id="budgetBar"></div>
         </div>
         <div class="sub" style="margin-top: 12px;">
-          <span class="muted" id="budgetText">—</span>
-          <span class="muted" id="budgetPercent">—</span>
+          <span class="muted" id="budgetText">вЂ”</span>
+          <span class="muted" id="budgetPercent">вЂ”</span>
         </div>
         <button class="btn primary" id="budgetSetBtn" type="button" style="margin-top: 12px;">Set monthly budget</button>
       </div>
@@ -1311,7 +1315,7 @@
           <button class="btn" id="txClear" type="button">Clear</button>
         </div>
 
-        <div class="hint" id="txHint">Tip: swipe isn’t needed—tap Save. You can delete from the list below.</div>
+        <div class="hint" id="txHint">Tip: swipe isnвЂ™t neededвЂ”tap Save. You can delete from the list below.</div>
       </div>
 
       <div class="card" style="margin-top: 12px;">
@@ -1366,20 +1370,20 @@
       <div class="card" id="profileCard">
         <div class="inlineRow">
           <h2>MY PROFILE</h2>
-          <button class="btn inline" id="profileEditBtn" type="button">✏️ Edit</button>
+          <button class="btn inline" id="profileEditBtn" type="button">вњЏпёЏ Edit</button>
         </div>
         <div style="margin-top: 8px;">
           <div class="profileRow">
             <span class="profileLabel">Status</span>
-            <span class="profileValue" id="profileStatus">—</span>
+            <span class="profileValue" id="profileStatus">вЂ”</span>
           </div>
           <div class="profileRow">
             <span class="profileLabel">Monthly Income</span>
-            <span class="profileValue" id="profileIncome">—</span>
+            <span class="profileValue" id="profileIncome">вЂ”</span>
           </div>
           <div class="profileRow" style="border-bottom: none; padding-bottom: 0;">
             <span class="profileLabel">Income Source</span>
-            <span class="profileValue" id="profileSource">—</span>
+            <span class="profileValue" id="profileSource">вЂ”</span>
           </div>
         </div>
       </div>
@@ -1411,19 +1415,19 @@
   <nav class="nav" aria-label="Bottom navigation">
     <div class="inner">
       <button class="tab active" id="tab-home" type="button" data-tab="home">
-        <span class="icon" aria-hidden="true">⌂</span>
+        <span class="icon" aria-hidden="true">вЊ‚</span>
         <span>Home</span>
       </button>
       <button class="tab" id="tab-transactions" type="button" data-tab="transactions">
-        <span class="icon" aria-hidden="true">⇄</span>
+        <span class="icon" aria-hidden="true">в‡„</span>
         <span>Transactions</span>
       </button>
       <button class="tab" id="tab-recurring" type="button" data-tab="recurring">
-        <span class="icon" aria-hidden="true">↻</span>
+        <span class="icon" aria-hidden="true">в†»</span>
         <span>Recurring</span>
       </button>
       <button class="tab" id="tab-accounts" type="button" data-tab="accounts">
-        <span class="icon" aria-hidden="true">◎</span>
+        <span class="icon" aria-hidden="true">в—Ћ</span>
         <span>Accounts</span>
       </button>
     </div>
@@ -1446,7 +1450,7 @@
 
   <div id="onboarding-screen" aria-label="Onboarding">
     <div class="obTop">
-      <button class="obBack" id="obBack" type="button" style="visibility:hidden">←</button>
+      <button class="obBack" id="obBack" type="button" style="visibility:hidden">в†ђ</button>
       <div class="obStepText" id="obStepText">1/3</div>
     </div>
 
@@ -1457,31 +1461,31 @@
       <div class="obViewport">
         <div class="obTrack" id="obTrack">
           <div class="obStep" data-step="1">
-            <button class="ob-option" onclick="selectOption(this, 'Working')">💼 Working</button>
-            <button class="ob-option" onclick="selectOption(this, 'Studying')">📚 Studying</button>
-            <button class="ob-option" onclick="selectOption(this, 'Unemployed')">🔍 Unemployed</button>
-            <button class="ob-option" onclick="selectOption(this, 'Other')">🏠 Other</button>
+            <button class="ob-option" onclick="selectOption(this, 'Working')">рџ’ј Working</button>
+            <button class="ob-option" onclick="selectOption(this, 'Studying')">рџ“љ Studying</button>
+            <button class="ob-option" onclick="selectOption(this, 'Unemployed')">рџ”Ќ Unemployed</button>
+            <button class="ob-option" onclick="selectOption(this, 'Other')">рџЏ  Other</button>
           </div>
 
           <div class="obStep" data-step="2">
-            <button class="ob-option" onclick="selectOption(this, '€0–500')">€0–500</button>
-            <button class="ob-option" onclick="selectOption(this, '€500–1500')">€500–1500</button>
-            <button class="ob-option" onclick="selectOption(this, '€1500–5000')">€1500–5000</button>
-            <button class="ob-option" onclick="selectOption(this, '€5000+')">€5000+</button>
+            <button class="ob-option" onclick="selectOption(this, 'в‚¬0вЂ“500')">в‚¬0вЂ“500</button>
+            <button class="ob-option" onclick="selectOption(this, 'в‚¬500вЂ“1500')">в‚¬500вЂ“1500</button>
+            <button class="ob-option" onclick="selectOption(this, 'в‚¬1500вЂ“5000')">в‚¬1500вЂ“5000</button>
+            <button class="ob-option" onclick="selectOption(this, 'в‚¬5000+')">в‚¬5000+</button>
           </div>
 
           <div class="obStep" data-step="3">
-            <button class="ob-option" onclick="selectOption(this, 'Salary')">💰 Salary</button>
-            <button class="ob-option" onclick="selectOption(this, 'Benefits')">📋 Benefits</button>
-            <button class="ob-option" onclick="selectOption(this, 'Family')">👨‍👩‍👧 Family</button>
-            <button class="ob-option" onclick="selectOption(this, 'Other')">✨ Other</button>
+            <button class="ob-option" onclick="selectOption(this, 'Salary')">рџ’° Salary</button>
+            <button class="ob-option" onclick="selectOption(this, 'Benefits')">рџ“‹ Benefits</button>
+            <button class="ob-option" onclick="selectOption(this, 'Family')">рџ‘ЁвЂЌрџ‘©вЂЌрџ‘§ Family</button>
+            <button class="ob-option" onclick="selectOption(this, 'Other')">вњЁ Other</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="obBottom">
-      <button class="obContinue" id="obContinue" type="button" disabled>Continue →</button>
+      <button class="obContinue" id="obContinue" type="button" disabled>Continue в†’</button>
     </div>
   </div>
 
@@ -1651,9 +1655,9 @@
       function currencySymbol() {
         const c = state.currency || 'USD';
         if (c === 'USD') return '$';
-        if (c === 'EUR') return '€';
-        if (c === 'GBP') return '£';
-        if (c === 'RUB') return '₽';
+        if (c === 'EUR') return 'в‚¬';
+        if (c === 'GBP') return 'ВЈ';
+        if (c === 'RUB') return 'в‚Ѕ';
         return '';
       }
 
@@ -1838,11 +1842,11 @@
         const incPct = msPrev.income > 0 ? ((ms.income - msPrev.income) / msPrev.income) * 100 : null;
         const expPct = msPrev.expenses > 0 ? ((ms.expenses - msPrev.expenses) / msPrev.expenses) * 100 : null;
 
-        const incArrow = incPct === null ? '—' : (incPct >= 0 ? '↑' : '↓');
-        const expArrow = expPct === null ? '—' : (expPct >= 0 ? '↑' : '↓');
+        const incArrow = incPct === null ? 'вЂ”' : (incPct >= 0 ? 'в†‘' : 'в†“');
+        const expArrow = expPct === null ? 'вЂ”' : (expPct >= 0 ? 'в†‘' : 'в†“');
 
-        const incText = incPct === null ? '—' : `${incArrow} ${Math.abs(incPct).toFixed(0)}% income`;
-        const expText = expPct === null ? '—' : `${expArrow} ${Math.abs(expPct).toFixed(0)}% expenses`;
+        const incText = incPct === null ? 'вЂ”' : `${incArrow} ${Math.abs(incPct).toFixed(0)}% income`;
+        const expText = expPct === null ? 'вЂ”' : `${expArrow} ${Math.abs(expPct).toFixed(0)}% expenses`;
 
         $('vsIncome').textContent = incText;
         $('vsExpenses').textContent = expText;
@@ -1872,8 +1876,8 @@
         else if (pct >= 0.7) col = '#FFA500';
         fill.style.background = col;
 
-        $('budgetText').textContent = has ? `${fmtMoney(spent)} spent of ${fmtMoney(budget)} budget` : '—';
-        $('budgetPercent').textContent = has ? `${Math.round(pct * 100)}%` : '—';
+        $('budgetText').textContent = has ? `${fmtMoney(spent)} spent of ${fmtMoney(budget)} budget` : 'вЂ”';
+        $('budgetPercent').textContent = has ? `${Math.round(pct * 100)}%` : 'вЂ”';
       }
 
       function renderGoals(data) {
@@ -2489,7 +2493,7 @@
           desc.className = 'desc';
           const acctName = acct ? acct.name : 'Unknown account';
           const note = (tx.note || '').trim();
-          desc.textContent = `${tx.date || ''} • ${acctName}${note ? ' • ' + note : ''}`;
+          desc.textContent = `${tx.date || ''} вЂў ${acctName}${note ? ' вЂў ' + note : ''}`;
 
           meta.appendChild(nameRow);
           meta.appendChild(desc);
@@ -2568,7 +2572,7 @@
           const acctName = acct ? acct.name : 'Unknown account';
           const paid = recurringIsPaidForThisMonth(rec);
           const paidText = paid ? `Paid (${rec.lastPaidMonth})` : 'Not paid yet';
-          desc.textContent = `${acctName} • Next: ${rec.nextDate || ''} • ${paidText}`;
+          desc.textContent = `${acctName} вЂў Next: ${rec.nextDate || ''} вЂў ${paidText}`;
 
           meta.appendChild(name);
           meta.appendChild(desc);
@@ -2640,9 +2644,9 @@
       }
 
       function renderAccounts(data) {
-        const st = localStorage.getItem(ZB_PROFILE_STATUS_KEY) || '—';
-        const inc = localStorage.getItem(ZB_PROFILE_INCOME_KEY) || '—';
-        const src = localStorage.getItem(ZB_PROFILE_SOURCE_KEY) || '—';
+        const st = localStorage.getItem(ZB_PROFILE_STATUS_KEY) || 'вЂ”';
+        const inc = localStorage.getItem(ZB_PROFILE_INCOME_KEY) || 'вЂ”';
+        const src = localStorage.getItem(ZB_PROFILE_SOURCE_KEY) || 'вЂ”';
         if ($('profileStatus')) $('profileStatus').textContent = st;
         if ($('profileIncome')) $('profileIncome').textContent = inc;
         if ($('profileSource')) $('profileSource').textContent = src;
@@ -2769,7 +2773,7 @@
 
               const dsc = document.createElement('div');
               dsc.className = 'desc';
-              dsc.textContent = `${tx.date || ''}${tx.note ? ' • ' + tx.note : ''}`;
+              dsc.textContent = `${tx.date || ''}${tx.note ? ' вЂў ' + tx.note : ''}`;
 
               m.appendChild(n);
               m.appendChild(dsc);
@@ -3448,7 +3452,7 @@
           subtitle.textContent = steps[idx].subtitle;
           subtitle.style.display = steps[idx].subtitle ? 'block' : 'none';
           back.style.visibility = idx === 0 ? 'hidden' : 'visible';
-          cont.textContent = idx === 2 ? 'Finish' : 'Continue →';
+          cont.textContent = idx === 2 ? 'Finish' : 'Continue в†’';
           cont.disabled = !stepValue(idx);
           syncSelectedUI();
         };
@@ -3531,3 +3535,4 @@
   </script>
 </body>
 </html>
+
